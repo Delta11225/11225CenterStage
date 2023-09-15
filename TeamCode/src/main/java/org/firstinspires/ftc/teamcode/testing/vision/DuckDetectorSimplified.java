@@ -37,12 +37,12 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-@Disabled
+//@Disabled
 @Autonomous
 public class DuckDetectorSimplified extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
-    private Servo servoTest;
+    //private Servo servoTest;
     OpenCvCamera webcam;
 
     //-1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
@@ -64,8 +64,8 @@ public class DuckDetectorSimplified extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        servoTest = hardwareMap.get(Servo.class, "servoTest");
-        servoTest.setPosition(0);
+        //servoTest = hardwareMap.get(Servo.class, "servoTest");
+        //servoTest.setPosition(0);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -117,7 +117,7 @@ public class DuckDetectorSimplified extends LinearOpMode {
 
 
         telemetry.update();
-        //sleep(1000);
+        sleep(10000);
         //call movement functions
 
     }

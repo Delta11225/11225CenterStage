@@ -62,7 +62,7 @@ public class WebcamTest extends LinearOpMode {
         telemetry.addData("Result", pipeline.getLastPos());
 
         telemetry.update();
-        sleep(1000);
+        sleep(10000);
     }
 
     private static class DetectionPipeline extends OpenCvPipeline {
