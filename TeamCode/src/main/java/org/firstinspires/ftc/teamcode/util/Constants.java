@@ -20,7 +20,7 @@ public abstract class Constants {
 //    public final static double tseArmReleasePosition = 0.3;
 
     public final static double fastMultiplier = 1.0;
-    public final static double normalMultiplier = 0.65;
+    public final static double normalMultiplier = 0.75;
     public final static double slowMultiplier = 0.15;
     public final static double superfastMultiplier = 1.0;
 
