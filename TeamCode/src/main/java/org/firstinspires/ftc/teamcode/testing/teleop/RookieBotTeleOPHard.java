@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.testing;
+package org.firstinspires.ftc.teamcode.testing.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
-public class RookieBotTeleOP extends LinearOpMode {
+public class RookieBotTeleOPHard extends LinearOpMode {
 
     private DcMotor motor0;
     private DcMotor motor1;
@@ -16,15 +15,18 @@ public class RookieBotTeleOP extends LinearOpMode {
 
         motor0 = hardwareMap.get(DcMotor.class, "motor0");
         motor1 = hardwareMap.get(DcMotor.class, "motor1");
-        motor0.setDirection(DcMotor.Direction.REVERSE);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            motor0.setPower(-this.gamepad1.left_stick_y);
+            motor1.setPower(-this.gamepad1.right_stick_x);
+            motor0.setPower(this.gamepad1.right_stick_x);
             motor1.setPower(-this.gamepad1.right_stick_y);
+            motor0.setPower(-this.gamepad1.right_stick_y);
+
+
             telemetry.addData("status", "running");
             telemetry.update();
         }
