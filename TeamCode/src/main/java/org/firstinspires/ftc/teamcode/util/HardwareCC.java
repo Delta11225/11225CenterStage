@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -59,6 +60,7 @@ public class HardwareCC {
     public Servo tseServo = null;
     public DcMotor collectionMotor = null;
     public DcMotor liftMotor = null;
+    public ColorSensor colorSensor;
 
     private BNO055IMU imu;
 
