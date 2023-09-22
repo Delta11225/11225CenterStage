@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.testing.vision;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -48,6 +49,15 @@ public class VisionTestAC extends LinearOpMode {
     private static int valMid = -1;
     private static int valLeft = -1;
     private static int valRight = -1;
+    private static int valMidB = -1;
+    private static int valLeftB = -1;
+    private static int valRightB = -1;
+    private static int valMidG = -1;
+    private static int valLeftG = -1;
+    private static int valRightG = -1;
+    private static int valMidR = -1;
+    private static int valLeftR = -1;
+    private static int valRightR = -1;
 
     private static float rectHeight = 1f/8f;
     private static float rectWidth =  1f/8f;
@@ -76,15 +86,18 @@ public class VisionTestAC extends LinearOpMode {
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
-        /*
+
         //code needed for camera to display on FTC Dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-       */
+
 
         telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+        telemetry.addData("BMat Values", valLeftB+"   "+valMidB+"   "+valRightB);
+        telemetry.addData("GMat Values", valLeftG+"   "+valMidG+"   "+valRightG);
+        telemetry.addData("RMat Values", valLeftR+"   "+valMidR+"   "+valRightR);
         telemetry.update();
 
         waitForStart();
@@ -123,25 +136,25 @@ public class VisionTestAC extends LinearOpMode {
 
     public class SamplePipeline extends OpenCvPipeline
     {
-        Mat yCbCr = new Mat();
-        Mat yMat = new Mat();
-        Mat CbMat = new Mat();
-        Mat CrMat = new Mat();
+        Mat BGR = new Mat();
+        Mat BMat = new Mat();
+        Mat GMat = new Mat();
+        Mat RMat = new Mat();
         Mat thresholdMat = new Mat();
         Mat all = new Mat();
 
     @Override
     public Mat processFrame(Mat input)
     {
-        Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
-        Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
-        Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
-        Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
-        Imgproc.threshold(CbMat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
-        //any pixel with a hue value less than 102 is being set to 0 (yellow)
+        Imgproc.cvtColor(input, BGR, Imgproc.COLOR_RGB2BGR);//converts rgb to ycrcb
+        Core.extractChannel(BGR, BMat, 0);//extracts cb channel as black and white RGB
+        Core.extractChannel(BGR, GMat, 1);//extracts cb channel as black and white RGB
+        Core.extractChannel(BGR, RMat, 2);//extracts cb channel as black and white RGB
+        Imgproc.threshold(RMat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+        //any pixel with a hue value less than 102 is being set to 0 (red)
         //any pixel with a hue value greater than 102 is being set to 255(blue)
         //Then swaps the blue and the yellows with the binary inv line
-        CbMat.copyTo(all);//copies mat object
+        RMat.copyTo(all);//copies mat object
 
         //get values from frame
         double[] pixMid = thresholdMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
@@ -152,6 +165,38 @@ public class VisionTestAC extends LinearOpMode {
 
         double[] pixRight = thresholdMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
         valRight = (int)pixRight[0];
+
+        //get values from BMat
+        double[] pixMidB = BMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidB = (int)pixMidB[0];
+
+        double[] pixLeftB = BMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftB = (int)pixLeftB[0];
+
+        double[] pixRightB = BMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightB = (int)pixRightB[0];
+
+        //get values from GMat
+        double[] pixMidG = GMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidG = (int)pixMidG[0];
+
+        double[] pixLeftG = GMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftG = (int)pixLeftG[0];
+
+        double[] pixRightG = GMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightG = (int)pixRightG[0];
+
+        //get values from RMat
+        double[] pixMidR = RMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidR = (int)pixMidR[0];
+
+        double[] pixLeftR = RMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftR = (int)pixLeftR[0];
+
+        double[] pixRightR = RMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightR = (int)pixRightR[0];
+
+
 
         //create three points
         Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
