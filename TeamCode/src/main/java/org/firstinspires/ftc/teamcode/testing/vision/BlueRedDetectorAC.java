@@ -1,23 +1,3 @@
-/*
- * Copyright (c) 2019 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 
 package org.firstinspires.ftc.teamcode.testing.vision;
 
@@ -39,7 +19,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 //@Disabled
 @Autonomous
-public class VisionTestAC extends LinearOpMode {
+public class BlueRedDetectorAC extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     //private Servo servoTest;
@@ -49,12 +29,11 @@ public class VisionTestAC extends LinearOpMode {
     private static int valMid = -1;
     private static int valLeft = -1;
     private static int valRight = -1;
+
     private static int valMidB = -1;
     private static int valLeftB = -1;
     private static int valRightB = -1;
-    private static int valMidG = -1;
-    private static int valLeftG = -1;
-    private static int valRightG = -1;
+
     private static int valMidR = -1;
     private static int valLeftR = -1;
     private static int valRightR = -1;
@@ -95,32 +74,57 @@ public class VisionTestAC extends LinearOpMode {
 
 
         telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
-        telemetry.addData("BMat Values", valLeftB+"   "+valMidB+"   "+valRightB);
-        telemetry.addData("GMat Values", valLeftG+"   "+valMidG+"   "+valRightG);
-        telemetry.addData("RMat Values", valLeftR+"   "+valMidR+"   "+valRightR);
+
+        telemetry.addData("ValuesR", valLeftR+"   "+valMidR+"   "+valRightR);
+
+        telemetry.addData("ValuesB", valLeftB+"   "+valMidB+"   "+valRightB);
+
         telemetry.update();
 
         waitForStart();
 
         runtime.reset();
 
-        if (valLeft == 255) {
-            telemetry.addData("Position", "Left");
+        if (valLeftB>valMidB && valLeftB>valRightB) {
+            telemetry.addData("Position", "LeftB");
             telemetry.update();
             // move to 0 degrees.
             //servoTest.setPosition(0);
             sleep(1000);
         }
-        else if (valMid == 255) {
-            telemetry.addData("Position", "Middle");
+        else if (valMidB>valLeftB && valMidB>valRightB) {
+            telemetry.addData("Position", "MiddleB");
             telemetry.update();
             // move to 90 degrees.
             //servoTest.setPosition(0.5);
             sleep(1000);
         }
 
-        else if (valRight == 255) {
-            telemetry.addData("Position", "Right");
+        else if (valRightB>valMidB && valRightB>valLeftB) {
+            telemetry.addData("Position", "RightB");
+            telemetry.update();
+            // move to 180 degrees.
+            //servoTest.setPosition(1);
+            sleep(1000);
+        }
+
+        if (valLeftR>valMidR && valLeftR>valRightR) {
+            telemetry.addData("Position", "LeftR");
+            telemetry.update();
+            // move to 0 degrees.
+            //servoTest.setPosition(0);
+            sleep(1000);
+        }
+        else if (valMidR>valLeftR && valMidR>valRightR) {
+            telemetry.addData("Position", "MiddleR");
+            telemetry.update();
+            // move to 90 degrees.
+            //servoTest.setPosition(0.5);
+            sleep(1000);
+        }
+
+        else if (valRightR>valMidR && valRightR>valLeftR) {
+            telemetry.addData("Position", "RightR");
             telemetry.update();
             // move to 180 degrees.
             //servoTest.setPosition(1);
@@ -136,67 +140,48 @@ public class VisionTestAC extends LinearOpMode {
 
     public class SamplePipeline extends OpenCvPipeline
     {
-        Mat BGR = new Mat();
-        Mat BMat = new Mat();
-        Mat GMat = new Mat();
-        Mat RMat = new Mat();
+        Mat yCbCr = new Mat();
+    //    Mat yMat = new Mat();
+        Mat CbMat = new Mat();
+        Mat CrMat = new Mat();
         Mat thresholdMat = new Mat();
+        Mat thresholdMatCb = new Mat();
+        Mat thresholdMatCr = new Mat();
         Mat all = new Mat();
 
     @Override
     public Mat processFrame(Mat input)
     {
-        Imgproc.cvtColor(input, BGR, Imgproc.COLOR_RGB2BGR);//converts rgb to ycrcb
-        Core.extractChannel(BGR, BMat, 0);//extracts cb channel as black and white RGB
-        Core.extractChannel(BGR, GMat, 1);//extracts cb channel as black and white RGB
-        Core.extractChannel(BGR, RMat, 2);//extracts cb channel as black and white RGB
-        Imgproc.threshold(RMat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
-        //any pixel with a hue value less than 102 is being set to 0 (red)
+        Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
+      //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
+        Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
+        Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
+      Imgproc.threshold(CbMat, thresholdMatCb, 150, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(CrMat, thresholdMatCr, 150, 255, Imgproc.THRESH_BINARY_INV);
+        //any pixel with a hue value less than 102 is being set to 0 (yellow)
         //any pixel with a hue value greater than 102 is being set to 255(blue)
         //Then swaps the blue and the yellows with the binary inv line
-        RMat.copyTo(all);//copies mat object
+        CbMat.copyTo(all);//copies mat object
 
         //get values from frame
-        double[] pixMid = thresholdMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
-        valMid = (int)pixMid[0];
-
-        double[] pixLeft = thresholdMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
-        valLeft = (int)pixLeft[0];
-
-        double[] pixRight = thresholdMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-        valRight = (int)pixRight[0];
-
-        //get values from BMat
-        double[] pixMidB = BMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
-        valMidB = (int)pixMidB[0];
-
-        double[] pixLeftB = BMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
-        valLeftB = (int)pixLeftB[0];
-
-        double[] pixRightB = BMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-        valRightB = (int)pixRightB[0];
-
-        //get values from GMat
-        double[] pixMidG = GMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
-        valMidG = (int)pixMidG[0];
-
-        double[] pixLeftG = GMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
-        valLeftG = (int)pixLeftG[0];
-
-        double[] pixRightG = GMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-        valRightG = (int)pixRightG[0];
-
-        //get values from RMat
-        double[] pixMidR = RMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        double[] pixMidR = thresholdMatCr.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
         valMidR = (int)pixMidR[0];
 
-        double[] pixLeftR = RMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        double[] pixLeftR = thresholdMatCr.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
         valLeftR = (int)pixLeftR[0];
 
-        double[] pixRightR = RMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        double[] pixRightR = thresholdMatCr.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
         valRightR = (int)pixRightR[0];
 
+        //get values from frame
+        double[] pixMidB = thresholdMatCb.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidB = (int)pixMidB[0];
 
+        double[] pixLeftB = thresholdMatCb.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftB = (int)pixLeftB[0];
+
+        double[] pixRightB = thresholdMatCb.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightB = (int)pixRightB[0];
 
         //create three points
         Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
