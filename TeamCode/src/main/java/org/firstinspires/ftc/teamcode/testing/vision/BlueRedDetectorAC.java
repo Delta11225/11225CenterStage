@@ -85,14 +85,14 @@ public class BlueRedDetectorAC extends LinearOpMode {
 
         runtime.reset();
 
-        if (valLeftB>valMidB && valLeftB>valRightB) {
+        if (valLeftB == 255) {
             telemetry.addData("Position", "LeftB");
             telemetry.update();
             // move to 0 degrees.
             //servoTest.setPosition(0);
             sleep(1000);
         }
-        else if (valMidB>valLeftB && valMidB>valRightB) {
+        if (valMidB == 255) {
             telemetry.addData("Position", "MiddleB");
             telemetry.update();
             // move to 90 degrees.
@@ -100,7 +100,7 @@ public class BlueRedDetectorAC extends LinearOpMode {
             sleep(1000);
         }
 
-        else if (valRightB>valMidB && valRightB>valLeftB) {
+        if (valRightB == 255) {
             telemetry.addData("Position", "RightB");
             telemetry.update();
             // move to 180 degrees.
@@ -108,14 +108,14 @@ public class BlueRedDetectorAC extends LinearOpMode {
             sleep(1000);
         }
 
-        if (valLeftR>valMidR && valLeftR>valRightR) {
+        if (valLeftR == 255) {
             telemetry.addData("Position", "LeftR");
             telemetry.update();
             // move to 0 degrees.
             //servoTest.setPosition(0);
             sleep(1000);
         }
-        else if (valMidR>valLeftR && valMidR>valRightR) {
+        if (valMidR == 255) {
             telemetry.addData("Position", "MiddleR");
             telemetry.update();
             // move to 90 degrees.
@@ -123,7 +123,7 @@ public class BlueRedDetectorAC extends LinearOpMode {
             sleep(1000);
         }
 
-        else if (valRightR>valMidR && valRightR>valLeftR) {
+        if (valRightR == 255) {
             telemetry.addData("Position", "RightR");
             telemetry.update();
             // move to 180 degrees.
@@ -156,12 +156,12 @@ public class BlueRedDetectorAC extends LinearOpMode {
       //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
         Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
         Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
-      Imgproc.threshold(CbMat, thresholdMatCb, 150, 255, Imgproc.THRESH_BINARY_INV);
-        Imgproc.threshold(CrMat, thresholdMatCr, 150, 255, Imgproc.THRESH_BINARY_INV);
+      Imgproc.threshold(CbMat, thresholdMatCb, 150, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(CrMat, thresholdMatCr, 150, 255, Imgproc.THRESH_BINARY);
         //any pixel with a hue value less than 102 is being set to 0 (yellow)
         //any pixel with a hue value greater than 102 is being set to 255(blue)
         //Then swaps the blue and the yellows with the binary inv line
-        CbMat.copyTo(all);//copies mat object
+        thresholdMatCr.copyTo(all);//copies mat object
 
         //get values from frame
         double[] pixMidR = thresholdMatCr.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
