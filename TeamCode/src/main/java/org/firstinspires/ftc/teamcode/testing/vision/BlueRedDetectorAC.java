@@ -141,7 +141,7 @@ public class BlueRedDetectorAC extends LinearOpMode {
     public class SamplePipeline extends OpenCvPipeline
     {
         Mat yCbCr = new Mat();
-    //    Mat yMat = new Mat();
+    Mat yMat = new Mat();
         Mat CbMat = new Mat();
         Mat CrMat = new Mat();
         Mat thresholdMat = new Mat();
@@ -153,7 +153,7 @@ public class BlueRedDetectorAC extends LinearOpMode {
     public Mat processFrame(Mat input)
     {
         Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
-      //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
+      Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
         Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
         Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
       Imgproc.threshold(CbMat, thresholdMatCb, 150, 255, Imgproc.THRESH_BINARY_INV);
