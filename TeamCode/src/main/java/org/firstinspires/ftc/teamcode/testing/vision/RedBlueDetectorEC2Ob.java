@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.testing.vision;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -63,8 +64,8 @@ public class RedBlueDetectorEC2Ob extends LinearOpMode {
     private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
     private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-    private static float[] leftPos = {1f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] midPos = {6f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
+    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
     //private static float[] rightPos = {7f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
@@ -84,13 +85,13 @@ public class RedBlueDetectorEC2Ob extends LinearOpMode {
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 //test
-/*
+
         //code needed for camera to display on FTC Dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-*/
+
 
         telemetry.addData("Values", valLeft+"   "+valMid);
 
@@ -104,28 +105,6 @@ public class RedBlueDetectorEC2Ob extends LinearOpMode {
 
         runtime.reset();
 
-        /*if (valLeftB == 255) {
-            telemetry.addData("Position", "LeftB");
-            telemetry.update();
-            // move to 0 degrees.
-            //servoTest.setPosition(0);
-            sleep(1000);
-        }
-        else if (valMidB == 255) {
-            telemetry.addData("Position", "MiddleB");
-            telemetry.update();
-            // move to 90 degrees.
-            //servoTest.setPosition(0.5);
-            sleep(1000);
-        }
-
-        else if (valRightB == 255) {
-            telemetry.addData("Position", "RightB");
-            telemetry.update();
-            // move to 180 degrees.
-            //servoTest.setPosition(1);
-            sleep(1000);
-        }*/
 
         if (valLeftR == 255 || valLeftB == 255) {
             telemetry.addData("Position", "Left");
@@ -134,7 +113,7 @@ public class RedBlueDetectorEC2Ob extends LinearOpMode {
             //servoTest.setPosition(0);
             sleep(1000);
         }
-        else if (valMidR == 255 || valMidR == 255) {
+        else if (valMidR == 255 || valMidB == 255) {
             telemetry.addData("Position", "Middle");
             telemetry.update();
             // move to 90 degrees.
@@ -156,6 +135,8 @@ public class RedBlueDetectorEC2Ob extends LinearOpMode {
         //call movement functions
 
     }
+
+
 
     public class SamplePipeline extends OpenCvPipeline
     {
