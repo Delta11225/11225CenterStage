@@ -21,7 +21,6 @@
 
 package org.firstinspires.ftc.teamcode.testing.vision;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -39,7 +38,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 //@Disabled
 @Autonomous
-public class RedBlueDetectorEC extends LinearOpMode {
+public class RedBlueDetectorEC2Ob extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     //private Servo servoTest;
@@ -52,11 +51,11 @@ public class RedBlueDetectorEC extends LinearOpMode {
 
     private static int valMidB = -1;
     private static int valLeftB = -1;
-    private static int valRightB = -1;
+    //private static int valRightB = -1;
 
     private static int valMidR = -1;
     private static int valLeftR = -1;
-    private static int valRightR = -1;
+    //private static int valRightR = -1;
 
     private static float rectHeight = 1f/8f;
     private static float rectWidth =  1f/8f;
@@ -66,7 +65,7 @@ public class RedBlueDetectorEC extends LinearOpMode {
 
     private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
     private static float[] leftPos = {1f/8f+offsetX, 4f/8f+offsetY};
-    private static float[] rightPos = {7f/8f+offsetX, 4f/8f+offsetY};
+    //private static float[] rightPos = {7f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     @Override
@@ -93,11 +92,11 @@ public class RedBlueDetectorEC extends LinearOpMode {
         telemetry.update();
 */
 
-        telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+        telemetry.addData("Values", valLeft+"   "+valMid);
 
-        telemetry.addData("ValuesR", valLeftR+"   "+valMidR+"   "+valRightR);
+        telemetry.addData("ValuesR", valLeftR+"   "+valMidR);
 
-        telemetry.addData("ValuesB", valLeftB+"   "+valMidB+"   "+valRightB);
+        telemetry.addData("ValuesB", valLeftB+"   "+valMidB);
 
         telemetry.update();
 
@@ -190,8 +189,7 @@ public class RedBlueDetectorEC extends LinearOpMode {
             double[] pixLeftR = thresholdMatCr.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
             valLeftR = (int)pixLeftR[0];
 
-            double[] pixRightR = thresholdMatCr.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-            valRightR = (int)pixRightR[0];
+
 
             //get values from frame
             double[] pixMidB = thresholdMatCb.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
@@ -200,18 +198,17 @@ public class RedBlueDetectorEC extends LinearOpMode {
             double[] pixLeftB = thresholdMatCb.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
             valLeftB = (int)pixLeftB[0];
 
-            double[] pixRightB = thresholdMatCb.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-            valRightB = (int)pixRightB[0];
+
 
             //create three points
             Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
             Point pointLeft = new Point((int)(input.cols()* leftPos[0]), (int)(input.rows()* leftPos[1]));
-            Point pointRight = new Point((int)(input.cols()* rightPos[0]), (int)(input.rows()* rightPos[1]));
+
 
             //draw circles on those points
             Imgproc.circle(all, pointMid,5, new Scalar( 255, 0, 0 ),1 );//draws circle
             Imgproc.circle(all, pointLeft,5, new Scalar( 255, 0, 0 ),1 );//draws circle
-            Imgproc.circle(all, pointRight,5, new Scalar( 255, 0, 0 ),1 );//draws circle
+
 
             //draw 3 rectangles
             Imgproc.rectangle(//1-3
@@ -232,15 +229,7 @@ public class RedBlueDetectorEC extends LinearOpMode {
                             input.cols()*(midPos[0]+rectWidth/2),
                             input.rows()*(midPos[1]+rectHeight/2)),
                     new Scalar(0, 255, 0), 3);
-            Imgproc.rectangle(//5-7
-                    all,
-                    new Point(
-                            input.cols()*(rightPos[0]-rectWidth/2),
-                            input.rows()*(rightPos[1]-rectHeight/2)),
-                    new Point(
-                            input.cols()*(rightPos[0]+rectWidth/2),
-                            input.rows()*(rightPos[1]+rectHeight/2)),
-                    new Scalar(0, 255, 0), 3);
+
 
 
             //return input; // this is the line that declares which image is returned to the viewport (DS)
