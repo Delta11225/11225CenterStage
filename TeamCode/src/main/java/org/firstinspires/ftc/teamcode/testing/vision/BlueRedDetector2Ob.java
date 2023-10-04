@@ -26,13 +26,13 @@ public class BlueRedDetector2Ob extends LinearOpMode {
     OpenCvCamera webcam;
 
     //-1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
-    private static int valLeft = -1;
+    private static int valMid = -1;
     private static int valRight = -1;
 
-    private static int valLeftB = -1;
+    private static int valMidB = -1;
     private static int valRightB = -1;
 
-    private static int valLeftR = -1;
+    private static int valMidR = -1;
     private static int valRightR = -1;
 
     private static float rectHeight = 1f/8f;
@@ -41,9 +41,9 @@ public class BlueRedDetector2Ob extends LinearOpMode {
     private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
     private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] leftPos = {1f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-    private static float[] rightPos = {7f/8f+offsetX, 4f/8f+offsetY};
+
+    private static float[] midPos = {1f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
+    private static float[] rightPos = {5f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     @Override
@@ -70,11 +70,11 @@ public class BlueRedDetector2Ob extends LinearOpMode {
         telemetry.update();
 
 
-        telemetry.addData("Values", valLeft+"   "+valRight);
+        telemetry.addData("Values", valMid+"   "+valRight);
 
-        telemetry.addData("ValuesR", valLeftR+"   "+valRightR);
+        telemetry.addData("ValuesR", valMidR+"   "+valRightR);
 
-        telemetry.addData("ValuesB", valLeftB+"   "+valRightB);
+        telemetry.addData("ValuesB", valMidB+"   "+valRightB);
 
         telemetry.update();
 
@@ -82,37 +82,28 @@ public class BlueRedDetector2Ob extends LinearOpMode {
 
         runtime.reset();
 
-        if (valLeftB == 255) {
-            telemetry.addData("Position", "LeftB");
+        if (valMidB == 255 || valMidR == 255) {
+            telemetry.addData("Position", "Mid");
             telemetry.update();
             // move to 90 degrees.
             //servoTest.setPosition(0.5);
             sleep(1000);
         }
 
-        if (valRightB == 255) {
-            telemetry.addData("Position", "RightB");
+        if (valRightB == 255 || valRightR == 255) {
+            telemetry.addData("Position", "Right");
             telemetry.update();
             // move to 180 degrees.
             //servoTest.setPosition(1);
             sleep(1000);
         }
 
-        if (valLeftR == 255) {
-            telemetry.addData("Position", "MiddleR");
+        else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255){
+            telemetry.addData("Position", "Left");
             telemetry.update();
-            // move to 90 degrees.
-            //servoTest.setPosition(0.5);
-            sleep(1000);
         }
 
-        if (valRightR == 255) {
-            telemetry.addData("Position", "RightR");
-            telemetry.update();
-            // move to 180 degrees.
-            //servoTest.setPosition(1);
-            sleep(1000);
-        }
+
 
 
         telemetry.update();
@@ -144,18 +135,18 @@ public class BlueRedDetector2Ob extends LinearOpMode {
         //any pixel with a hue value less than 102 is being set to 0 (yellow)
         //any pixel with a hue value greater than 102 is being set to 255(blue)
         //Then swaps the blue and the yellows with the binary inv line
-        thresholdMatCr.copyTo(all);//copies mat object
+        CrMat.copyTo(all);//copies mat object
 
         //get values from frame
-        double[] pixLeftR = thresholdMatCr.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
-        valLeftR = (int)pixLeftR[0];
+        double[] pixMidR = thresholdMatCr.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidR = (int)pixMidR[0];
 
         double[] pixRightR = thresholdMatCr.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
         valRightR = (int)pixRightR[0];
 
         //get values from frame
-        double[] pixLeftB = thresholdMatCb.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
-        valLeftB = (int)pixLeftB[0];
+        double[] pixMidB = thresholdMatCb.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidB = (int)pixMidB[0];
 
         double[] pixRightB = thresholdMatCb.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
         valRightB = (int)pixRightB[0];
