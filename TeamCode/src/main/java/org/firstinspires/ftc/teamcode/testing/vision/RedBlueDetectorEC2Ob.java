@@ -83,7 +83,7 @@ public class RedBlueDetectorEC2Ob extends LinearOpMode {
         //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-
+//test
 /*
         //code needed for camera to display on FTC Dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
