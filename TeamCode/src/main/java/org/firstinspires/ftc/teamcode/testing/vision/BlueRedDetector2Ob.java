@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.testing.vision;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -46,11 +48,17 @@ public class BlueRedDetector2Ob extends LinearOpMode {
     private static float[] rightPos = {5f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
+    private Servo servoRight;
+    private Servo servoLeft;
+
     @Override
     public void runOpMode()
     {
         //servoTest = hardwareMap.get(Servo.class, "servoTest");
         //servoTest.setPosition(0);
+
+        servoRight = hardwareMap.get(Servo.class, "servo_right");
+        servoLeft = hardwareMap.get(Servo.class, "servo_left");
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -86,21 +94,24 @@ public class BlueRedDetector2Ob extends LinearOpMode {
             telemetry.addData("Position", "Mid");
             telemetry.update();
             // move to 90 degrees.
-            //servoTest.setPosition(0.5);
+            servoLeft.setPosition(0.2);
+            servoRight.setPosition(0.7);
             sleep(1000);
         }
 
         if (valRightB == 255 || valRightR == 255) {
             telemetry.addData("Position", "Right");
             telemetry.update();
-            // move to 180 degrees.
-            //servoTest.setPosition(1);
+            servoLeft.setPosition(0.2);
+            servoRight.setPosition(1);
             sleep(1000);
         }
 
         else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255){
             telemetry.addData("Position", "Left");
             telemetry.update();
+            servoLeft.setPosition(0);
+            servoRight.setPosition(0.7);
         }
 
 
