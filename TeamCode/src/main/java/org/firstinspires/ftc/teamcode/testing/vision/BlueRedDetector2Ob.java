@@ -94,24 +94,24 @@ public class BlueRedDetector2Ob extends LinearOpMode {
             telemetry.addData("Position", "Mid");
             telemetry.update();
             // move to 90 degrees.
-            servoLeft.setPosition(0.5);
-            servoRight.setPosition(0.5);
+            servoLeft.setPosition(0.2);
+            servoRight.setPosition(0.7);
             sleep(1000);
         }
 
         if (valRightB == 255 || valRightR == 255) {
             telemetry.addData("Position", "Right");
             telemetry.update();
-            servoLeft.setPosition(0.3);
-            servoRight.setPosition(0.7);
+            servoLeft.setPosition(0.2);
+            servoRight.setPosition(1);
             sleep(1000);
         }
 
         else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255){
             telemetry.addData("Position", "Left");
             telemetry.update();
-            servoLeft.setPosition(0.7);
-            servoRight.setPosition(0.3);
+            servoLeft.setPosition(0);
+            servoRight.setPosition(0.7);
         }
 
 

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class ServoTestAC extends LinearOpMode {
    private Servo servoLeft;
    private Servo servoRight;
+
    @Override
    public void runOpMode() {
 
@@ -24,14 +25,26 @@ public class ServoTestAC extends LinearOpMode {
       telemetry.update();
       waitForStart();
 
-      servoLeft.setPosition(0.3);
-      telemetry.addData("Motor Power", servoLeft.getPosition());
+      waitForStart();
+      while (opModeIsActive()) {
+         if (gamepad1.x) {
+            servoLeft.setPosition(0);
+            servoRight.setPosition(0.7);
+         }
+         if (gamepad1.a) {
+            servoLeft.setPosition(0.2);
+            servoRight.setPosition(0.7);
+         }
+         if (gamepad1.b) {
+            servoLeft.setPosition(0.2);
+            servoRight.setPosition(1);
+         }
+         telemetry.addData("Servo Position", servoLeft.getPosition());
+         telemetry.update();
 
-      telemetry.update();
-      sleep(50);
-      servoRight.setPosition(0.3);
-      telemetry.addData("Motor Power", servoRight.getPosition());
-      telemetry.update();
+         telemetry.addData("Servo Position", servoRight.getPosition());
+         telemetry.update();
 
+      }
    }
 }
