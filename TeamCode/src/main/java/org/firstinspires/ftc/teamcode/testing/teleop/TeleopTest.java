@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.teamcode.util.ControlConfig;
 
 import java.util.Locale;
 
-@TeleOp(name="TeleOp test")
+@TeleOp//(name="TeleOp test")
 //@Disabled
 public class TeleopTest extends LinearOpMode {
 
@@ -66,6 +67,8 @@ public class TeleopTest extends LinearOpMode {
 
         composeTelemetry();
 
+
+
         robot = new HardwareCC(hardwareMap);
 
         robot.frontLeft.setPower(0);
@@ -81,7 +84,7 @@ public class TeleopTest extends LinearOpMode {
         robot.rearLeft.setDirection(DcMotor.Direction.REVERSE);
         robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
 
-     
+
 
         // End init phase
         waitForStart();
