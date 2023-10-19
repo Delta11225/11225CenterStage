@@ -79,10 +79,10 @@ public class TeleopTest extends LinearOpMode {
 
 
 
-        robot.frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
-        robot.rearLeft.setDirection(DcMotor.Direction.REVERSE);
-        robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
+        robot.frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        robot.frontRight.setDirection(DcMotor.Direction.FORWARD);
+        robot.rearLeft.setDirection(DcMotor.Direction.FORWARD);
+        robot.rearRight.setDirection(DcMotor.Direction.FORWARD);
 
 
 
@@ -106,6 +106,9 @@ public class TeleopTest extends LinearOpMode {
                 peripheralMove();
 
                 currentAngle = angles.firstAngle + 360;
+                //add this line if control hub is mounted backwards
+                //currentAngle = currentAngle + 180;
+
                 telemetry.addData("currentAngle loop 1", "%.1f", currentAngle);
             }
 
@@ -117,6 +120,10 @@ public class TeleopTest extends LinearOpMode {
                 peripheralMove();
 
                 currentAngle = angles.firstAngle;
+                //add this line if control hub is mounted backwards
+                //currentAngle = currentAngle + 180;
+
+
                 telemetry.addData("currentAngle loop 2", "%.1f", currentAngle);
             }
 
