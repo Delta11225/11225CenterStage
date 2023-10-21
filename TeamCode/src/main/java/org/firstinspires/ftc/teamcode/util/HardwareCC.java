@@ -81,25 +81,25 @@ public class HardwareCC {
         // NEVER DO THIS
 //        try {
         leftBack = hardwareMap.dcMotor.get("rear_left");
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        //leftBack.setDirection(DcMotor.Direction.REVERSE);
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
         leftFront = hardwareMap.dcMotor.get("front_left");
-        leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        //leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
         rightFront = hardwareMap.dcMotor.get("front_right");
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        //rightFront.setDirection(DcMotor.Direction.FORWARD);
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
         rightBack = hardwareMap.dcMotor.get("rear_right");
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        //rightBack.setDirection(DcMotor.Direction.FORWARD);
 //        } catch (Exception ignored) {
 //        }
 
