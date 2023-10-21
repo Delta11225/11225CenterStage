@@ -80,9 +80,9 @@ public class TeleopTest extends LinearOpMode {
 
 
         robot.frontLeft.setDirection(DcMotor.Direction.FORWARD);
-        robot.frontRight.setDirection(DcMotor.Direction.FORWARD);
+        robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
         robot.rearLeft.setDirection(DcMotor.Direction.FORWARD);
-        robot.rearRight.setDirection(DcMotor.Direction.FORWARD);
+        robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
 
 
 
@@ -181,9 +181,9 @@ public class TeleopTest extends LinearOpMode {
 
 
         robot.frontLeft.setPower(frontLeft * powerMultiplier);
-        robot.frontRight.setPower(-frontRight * powerMultiplier);
+        robot.frontRight.setPower(frontRight * powerMultiplier);
         robot.rearLeft.setPower(rearLeft * powerMultiplier);
-        robot.rearRight.setPower(-rearRight * powerMultiplier);
+        robot.rearRight.setPower(rearRight * powerMultiplier);
 
 
     }
