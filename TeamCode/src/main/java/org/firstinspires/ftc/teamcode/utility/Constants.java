@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.utility;
 
 /**
  * This is a class that holds all necessary constants for the robot. Put "magic numbers" here.
