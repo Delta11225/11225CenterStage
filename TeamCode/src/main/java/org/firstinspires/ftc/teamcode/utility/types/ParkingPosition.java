@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.types;
+package org.firstinspires.ftc.teamcode.utility.types;
 
 public enum ParkingPosition {
     ONE(0),
