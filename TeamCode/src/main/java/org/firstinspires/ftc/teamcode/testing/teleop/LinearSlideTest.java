@@ -36,6 +36,13 @@ public class LinearSlideTest extends LinearOpMode {
          } else {
             linearSlide.setPower(0.0);
          }
+
+         if (gamepad1.a) {
+            arm.setPosition(0.5);
+         }
+         else if (gamepad1.b) {
+            arm.setPosition(0);
+         }
          telemetry.addData("encoder",linearSlide.getCurrentPosition());
          telemetry.update();
       }

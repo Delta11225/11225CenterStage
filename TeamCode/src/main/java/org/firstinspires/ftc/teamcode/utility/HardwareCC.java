@@ -49,11 +49,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * ENSURE each INDIVIDUAL CALL to the hardware map is in its OWN try-catch block.
  */
 public class HardwareCC {
-//  rightFront;
-    public DcMotor leftBack = null;
-    public DcMotor rightBack = null;
-    public DcMotor leftFront = null;
-    public DcMotor rightFront = null;
+
+    public DcMotor rearLeft = null;
+    public DcMotor rearRight = null;
+    public DcMotor frontLeft = null;
+    public DcMotor frontRight = null;
     public WebcamName logitechWebcam = null;
     public DcMotor towerMotor = null;
     public Servo dumpServo = null;
@@ -80,26 +80,26 @@ public class HardwareCC {
         // Define and initialize motors
         // NEVER DO THIS
 //        try {
-        leftBack = hardwareMap.dcMotor.get("rear_left");
-        //leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rearLeft = hardwareMap.dcMotor.get("rear_left");
+        rearLeft.setDirection(DcMotor.Direction.FORWARD);
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
-        leftFront = hardwareMap.dcMotor.get("front_left");
-        //leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        frontLeft = hardwareMap.dcMotor.get("front_left");
+        frontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
-        rightFront = hardwareMap.dcMotor.get("front_right");
-        //rightFront.setDirection(DcMotor.Direction.FORWARD);
+        frontRight = hardwareMap.dcMotor.get("front_right");
+        frontRight.setDirection(DcMotor.Direction.REVERSE);
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
-        rightBack = hardwareMap.dcMotor.get("rear_right");
-        //rightBack.setDirection(DcMotor.Direction.FORWARD);
+        rearRight = hardwareMap.dcMotor.get("rear_right");
+        rearRight.setDirection(DcMotor.Direction.REVERSE);
 //        } catch (Exception ignored) {
 //        }
 

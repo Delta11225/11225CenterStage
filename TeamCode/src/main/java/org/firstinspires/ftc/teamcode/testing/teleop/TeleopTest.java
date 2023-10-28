@@ -33,10 +33,10 @@ public class TeleopTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    double leftFront;
-    double leftBack;
-    double rightFront;
-    double rightBack;
+    double frontLeft;
+    double rearLeft;
+    double frontRight;
+    double rearRight;
 
     double forward;
     double right;
@@ -68,18 +68,18 @@ public class TeleopTest extends LinearOpMode {
 
         robot = new HardwareCC(hardwareMap);
 
-        robot.leftFront.setPower(0);
-        robot.rightFront.setPower(0);
-        robot.leftBack.setPower(0);
-        robot.rightBack.setPower(0);
+        robot.frontLeft.setPower(0);
+        robot.frontRight.setPower(0);
+        robot.rearLeft.setPower(0);
+        robot.rearRight.setPower(0);
         //robot.dumpServo.setPosition(0);
 
 
 
-        robot.leftFront.setDirection(DcMotor.Direction.FORWARD);
-        robot.rightFront.setDirection(DcMotor.Direction.REVERSE);
-        robot.leftBack.setDirection(DcMotor.Direction.FORWARD);
-        robot.rightBack.setDirection(DcMotor.Direction.REVERSE);
+        robot.frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
+        robot.rearLeft.setDirection(DcMotor.Direction.FORWARD);
+        robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
 
      
 
@@ -145,15 +145,15 @@ public class TeleopTest extends LinearOpMode {
         telemetry.addData("side: ", side);
         telemetry.addData("clockwise: ", clockwise);
 
-        leftFront = forward + right + clockwise;
-        leftBack = forward - right + clockwise;
-        rightBack = forward + right - clockwise;
-        rightFront = forward - right - clockwise;
+        frontLeft = forward + right + clockwise;
+        rearLeft = forward - right + clockwise;
+        rearRight = forward + right - clockwise;
+        frontRight = forward - right - clockwise;
 
-        telemetry.addData("front left: ", leftFront);
-        telemetry.addData("rear left: ", leftBack);
-        telemetry.addData("rear right: ", rightBack);
-        telemetry.addData("front right: ", rightFront);
+        telemetry.addData("front left: ", frontLeft);
+        telemetry.addData("rear left: ", rearLeft);
+        telemetry.addData("rear right: ", rearRight);
+        telemetry.addData("front right: ", frontRight);
 
         // Handle speed control
         if (ControlConfig.fast){
@@ -170,10 +170,10 @@ public class TeleopTest extends LinearOpMode {
         telemetry.update();
 
 
-        robot.leftFront.setPower(leftFront * powerMultiplier);
-        robot.rightFront.setPower(rightFront * powerMultiplier);
-        robot.leftBack.setPower(leftBack * powerMultiplier);
-        robot.rightBack.setPower(rightBack * powerMultiplier);
+        robot.frontLeft.setPower(frontLeft * powerMultiplier);
+        robot.frontRight.setPower(frontRight * powerMultiplier);
+        robot.rearLeft.setPower(rearLeft * powerMultiplier);
+        robot.rearRight.setPower(rearRight * powerMultiplier);
 
 
     }
