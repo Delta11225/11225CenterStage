@@ -1,11 +1,9 @@
 
-
 package org.firstinspires.ftc.teamcode.testing.vision;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,9 +16,10 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
+
 //@Disabled
 @Autonomous
-public class DuckDetectorSimplified extends LinearOpMode {
+public class BlueRedDetectorThresh extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     //private Servo servoTest;
@@ -30,6 +29,22 @@ public class DuckDetectorSimplified extends LinearOpMode {
     private static int valMid = -1;
     private static int valLeft = -1;
     private static int valRight = -1;
+
+    private static int valMidB = -1;
+    private static int valLeftB = -1;
+    private static int valRightB = -1;
+
+    private static int valMidCb = -1;
+    private static int valLeftCb = -1;
+    private static int valRightCb = -1;
+
+    private static int valMidR = -1;
+    private static int valLeftR = -1;
+    private static int valRightR = -1;
+
+    private static int valMidCr = -1;
+    private static int valLeftCr = -1;
+    private static int valRightCr = -1;
 
     private static float rectHeight = 1f/8f;
     private static float rectWidth =  1f/8f;
@@ -58,38 +73,71 @@ public class DuckDetectorSimplified extends LinearOpMode {
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
-        /*
+
         //code needed for camera to display on FTC Dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-       */
+
 
         telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+        telemetry.addData("ValuesR Raw", valLeftCr+"   "+valMidCr+"   "+valRightCr);
+
+        telemetry.addData("ValuesR Thresh", valLeftR+"   "+valMidR+"   "+valRightR);
+
+        telemetry.addData("ValuesB Raw", valLeftCb+"   "+valMidCb+"   "+valRightCb);
+
+        telemetry.addData("ValuesB Thresh", valLeftB+"   "+valMidB+"   "+valRightB);
+
+
+
         telemetry.update();
 
         waitForStart();
 
         runtime.reset();
 
-        if (valLeft == 255) {
-            telemetry.addData("Position", "Left");
+        if (valLeftB==255) {
+            telemetry.addData("Position", "LeftB");
             telemetry.update();
             // move to 0 degrees.
             //servoTest.setPosition(0);
             sleep(1000);
         }
-        else if (valMid == 255) {
-            telemetry.addData("Position", "Middle");
+        else if (valMidB==255) {
+            telemetry.addData("Position", "MiddleB");
             telemetry.update();
             // move to 90 degrees.
             //servoTest.setPosition(0.5);
             sleep(1000);
         }
 
-        else if (valRight == 255) {
-            telemetry.addData("Position", "Right");
+        else if (valRightB==255) {
+            telemetry.addData("Position", "RightB");
+            telemetry.update();
+            // move to 180 degrees.
+            //servoTest.setPosition(1);
+            sleep(1000);
+        }
+
+        if (valLeftR==255) {
+            telemetry.addData("Position", "LeftR");
+            telemetry.update();
+            // move to 0 degrees.
+            //servoTest.setPosition(0);
+            sleep(1000);
+        }
+        else if (valMidR==255) {
+            telemetry.addData("Position", "MiddleR");
+            telemetry.update();
+            // move to 90 degrees.
+            //servoTest.setPosition(0.5);
+            sleep(1000);
+        }
+
+        else if (valRightR==255) {
+            telemetry.addData("Position", "RightR");
             telemetry.update();
             // move to 180 degrees.
             //servoTest.setPosition(1);
@@ -106,34 +154,67 @@ public class DuckDetectorSimplified extends LinearOpMode {
     public class SamplePipeline extends OpenCvPipeline
     {
         Mat yCbCr = new Mat();
-        Mat yMat = new Mat();
+    //    Mat yMat = new Mat();
         Mat CbMat = new Mat();
         Mat CrMat = new Mat();
         Mat thresholdMat = new Mat();
+        Mat thresholdMatCb = new Mat();
+        Mat thresholdMatCr = new Mat();
         Mat all = new Mat();
 
     @Override
     public Mat processFrame(Mat input)
     {
         Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
-        Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
+      //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
         Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
         Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
-        Imgproc.threshold(CbMat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+      Imgproc.threshold(CbMat, thresholdMatCb, 160, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(CrMat, thresholdMatCr, 160, 255, Imgproc.THRESH_BINARY);
         //any pixel with a hue value less than 102 is being set to 0 (yellow)
         //any pixel with a hue value greater than 102 is being set to 255(blue)
         //Then swaps the blue and the yellows with the binary inv line
         CbMat.copyTo(all);//copies mat object
 
-        //get values from frame
-        double[] pixMid = thresholdMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
-        valMid = (int)pixMid[0];
+        //get values from Cr Channel Raw
+        double[] pixMidCr = CrMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidCr = (int)pixMidCr[0];
 
-        double[] pixLeft = thresholdMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
-        valLeft = (int)pixLeft[0];
+        double[] pixLeftCr = CrMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftCr = (int)pixLeftCr[0];
 
-        double[] pixRight = thresholdMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-        valRight = (int)pixRight[0];
+        double[] pixRightCr = CrMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightCr = (int)pixRightCr[0];
+
+        //get values from thresholded Cr Mat (0 or 255)
+        double[] pixMidR = thresholdMatCr.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidR = (int)pixMidR[0];
+
+        double[] pixLeftR = thresholdMatCr.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftR = (int)pixLeftR[0];
+
+        double[] pixRightR = thresholdMatCr.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightR = (int)pixRightR[0];
+
+        //get values from Cb Channel Raw
+        double[] pixMidCb = CbMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidCb = (int)pixMidCr[0];
+
+        double[] pixLeftCb = CbMat.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftCb = (int)pixLeftCb[0];
+
+        double[] pixRightCb = CbMat.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightCb = (int)pixRightCb[0];
+
+        //get values from thresholded Cb Mat (0 or 255)
+        double[] pixMidB = thresholdMatCb.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+        valMidB = (int)pixMidB[0];
+
+        double[] pixLeftB = thresholdMatCb.get((int)(input.rows()* leftPos[1]), (int)(input.cols()* leftPos[0]));//gets value at circle
+        valLeftB = (int)pixLeftB[0];
+
+        double[] pixRightB = thresholdMatCb.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
+        valRightB = (int)pixRightB[0];
 
         //create three points
         Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));

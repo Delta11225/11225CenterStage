@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.testing.vision;
 
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.util.types.ParkingPosition;
+import org.firstinspires.ftc.teamcode.utility.types.ParkingPosition;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -22,11 +22,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-@Disabled
+//@Disabled
 @Autonomous
 public class WebcamTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     OpenCvCamera webcam;
+    
 
     @Override
     public void runOpMode() {
@@ -99,6 +100,7 @@ public class WebcamTest extends LinearOpMode {
             // Get mat of all ones of the same size as input to set saturation and value (brightness)
             // to max
             Mat ones = new Mat(input.rows(), input.cols(), hMat.type(), new Scalar(255));
+
 
             // Put the mats in the proper order as merge() expects a list
             List<Mat> matList = Arrays.asList(

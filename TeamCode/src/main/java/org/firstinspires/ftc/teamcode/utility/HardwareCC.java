@@ -27,9 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.utility;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -48,17 +49,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * ENSURE each INDIVIDUAL CALL to the hardware map is in its OWN try-catch block.
  */
 public class HardwareCC {
-
-    public DcMotor rearLeft = null;
-    public DcMotor rearRight = null;
-    public DcMotor frontLeft = null;
-    public DcMotor frontRight = null;
+//  rightFront;
+    public DcMotor leftBack = null;
+    public DcMotor rightBack = null;
+    public DcMotor leftFront = null;
+    public DcMotor rightFront = null;
     public WebcamName logitechWebcam = null;
     public DcMotor towerMotor = null;
     public Servo dumpServo = null;
     public Servo tseServo = null;
     public DcMotor collectionMotor = null;
     public DcMotor liftMotor = null;
+    public ColorSensor colorSensor;
 
     private BNO055IMU imu;
 
@@ -78,26 +80,26 @@ public class HardwareCC {
         // Define and initialize motors
         // NEVER DO THIS
 //        try {
-        rearLeft = hardwareMap.dcMotor.get("rear_left");
-        rearLeft.setDirection(DcMotor.Direction.REVERSE);
+        leftBack = hardwareMap.dcMotor.get("rear_left");
+        //leftBack.setDirection(DcMotor.Direction.REVERSE);
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
-        frontLeft = hardwareMap.dcMotor.get("front_left");
-        frontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        leftFront = hardwareMap.dcMotor.get("front_left");
+        //leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
-        frontRight = hardwareMap.dcMotor.get("front_right");
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        rightFront = hardwareMap.dcMotor.get("front_right");
+        //rightFront.setDirection(DcMotor.Direction.FORWARD);
 //        } catch (Exception ignored) {
 //        }
 
 //        try {
-        rearRight = hardwareMap.dcMotor.get("rear_right");
-        rearRight.setDirection(DcMotor.Direction.FORWARD);
+        rightBack = hardwareMap.dcMotor.get("rear_right");
+        //rightBack.setDirection(DcMotor.Direction.FORWARD);
 //        } catch (Exception ignored) {
 //        }
 

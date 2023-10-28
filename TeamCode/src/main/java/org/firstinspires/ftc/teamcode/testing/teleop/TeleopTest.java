@@ -1,32 +1,3 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -44,25 +15,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.util.Constants;
-import org.firstinspires.ftc.teamcode.util.HardwareCC;
-import org.firstinspires.ftc.teamcode.util.ControlConfig;
+import org.firstinspires.ftc.teamcode.utility.Constants;
+import org.firstinspires.ftc.teamcode.utility.HardwareCC;
+import org.firstinspires.ftc.teamcode.utility.ControlConfig;
 
 import java.util.Locale;
-
-/**
- * This OpMode uses the common Pushbot hardware class to define the devices on the robot.
- * All device access is managed through the HardwarePushbot class.
- * The code is structured as a LinearOpMode
- *
- * This particular OpMode executes a POV Game style Teleop for a PushBot
- * In this mode the left stick moves the robot FWD and back, the Right stick turns left and right.
- * It raises and lowers the claw using the Gampad Y and A buttons respectively.
- * It also opens and closes the claws slowly using the left and right Bumper buttons.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
 @TeleOp(name="TeleOp test")
 //@Disabled
@@ -76,10 +33,10 @@ public class TeleopTest extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    double frontLeft;
-    double rearLeft;
-    double frontRight;
-    double rearRight;
+    double leftFront;
+    double leftBack;
+    double rightFront;
+    double rightBack;
 
     double forward;
     double right;
@@ -111,18 +68,18 @@ public class TeleopTest extends LinearOpMode {
 
         robot = new HardwareCC(hardwareMap);
 
-        robot.frontLeft.setPower(0);
-        robot.frontRight.setPower(0);
-        robot.rearLeft.setPower(0);
-        robot.rearRight.setPower(0);
+        robot.leftFront.setPower(0);
+        robot.rightFront.setPower(0);
+        robot.leftBack.setPower(0);
+        robot.rightBack.setPower(0);
         //robot.dumpServo.setPosition(0);
 
 
 
-        robot.frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
-        robot.rearLeft.setDirection(DcMotor.Direction.REVERSE);
-        robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
+        robot.leftFront.setDirection(DcMotor.Direction.FORWARD);
+        robot.rightFront.setDirection(DcMotor.Direction.REVERSE);
+        robot.leftBack.setDirection(DcMotor.Direction.FORWARD);
+        robot.rightBack.setDirection(DcMotor.Direction.REVERSE);
 
      
 
@@ -188,15 +145,15 @@ public class TeleopTest extends LinearOpMode {
         telemetry.addData("side: ", side);
         telemetry.addData("clockwise: ", clockwise);
 
-        frontLeft = forward + right + clockwise;
-        rearLeft = forward - right + clockwise;
-        rearRight = forward + right - clockwise;
-        frontRight = forward - right - clockwise;
+        leftFront = forward + right + clockwise;
+        leftBack = forward - right + clockwise;
+        rightBack = forward + right - clockwise;
+        rightFront = forward - right - clockwise;
 
-        telemetry.addData("front left: ", frontLeft);
-        telemetry.addData("rear left: ", rearLeft);
-        telemetry.addData("rear right: ", rearRight);
-        telemetry.addData("front right: ", frontRight);
+        telemetry.addData("front left: ", leftFront);
+        telemetry.addData("rear left: ", leftBack);
+        telemetry.addData("rear right: ", rightBack);
+        telemetry.addData("front right: ", rightFront);
 
         // Handle speed control
         if (ControlConfig.fast){
@@ -213,10 +170,10 @@ public class TeleopTest extends LinearOpMode {
         telemetry.update();
 
 
-        robot.frontLeft.setPower(frontLeft * powerMultiplier);
-        robot.frontRight.setPower(-frontRight * powerMultiplier);
-        robot.rearLeft.setPower(rearLeft * powerMultiplier);
-        robot.rearRight.setPower(-rearRight * powerMultiplier);
+        robot.leftFront.setPower(leftFront * powerMultiplier);
+        robot.rightFront.setPower(rightFront * powerMultiplier);
+        robot.leftBack.setPower(leftBack * powerMultiplier);
+        robot.rightBack.setPower(rightBack * powerMultiplier);
 
 
     }
