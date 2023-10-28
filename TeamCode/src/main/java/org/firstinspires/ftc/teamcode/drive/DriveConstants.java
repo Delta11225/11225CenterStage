@@ -46,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.5; // in
+    public static double TRACK_WIDTH = 13.51; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -70,7 +70,7 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 38; //running max velocity at 80% per RR recommendation
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(289.1394);
+    public static double MAX_ANG_VEL = Math.toRadians(172);
     public static double MAX_ANG_ACCEL = Math.toRadians(289.1394);
 
     /*
