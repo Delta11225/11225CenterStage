@@ -54,7 +54,7 @@ public class BlueRedDetectorThresh2Object extends LinearOpMode {
 
     private static float[] midPos = {1f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
     //private static float[] leftPos = {1f/8f+offsetX, 4f/8f+offsetY};
-    private static float[] rightPos = {7f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] rightPos = {5f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     @Override
@@ -73,13 +73,13 @@ public class BlueRedDetectorThresh2Object extends LinearOpMode {
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
-
+/*
         //code needed for camera to display on FTC Dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-
+*/
 
         telemetry.addData("Values",    valMid+"   "+valRight);
         telemetry.addData("ValuesR Raw",   +valMidCr+"   "+valRightCr);
