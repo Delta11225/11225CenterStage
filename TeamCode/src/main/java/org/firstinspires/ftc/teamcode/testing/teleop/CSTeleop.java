@@ -9,8 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class CSTeleop extends LinearOpMode{
     // Claw open and close
-    private Servo leftClaw;
-    private Servo rightClaw;
+    private Servo Clamp;
     private Servo Arm;
     private DcMotor linearSlide;
     private Servo Collector;
@@ -19,8 +18,7 @@ public class CSTeleop extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         // Claws open and close
-        leftClaw = hardwareMap.get(Servo.class, "left_claw");
-        rightClaw = hardwareMap.get(Servo.class, "right_claw");
+        Clamp = hardwareMap.get(Servo.class, "clamp");
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -29,12 +27,14 @@ public class CSTeleop extends LinearOpMode{
 
         while(opModeIsActive()){
             if (gamepad2.b){
-                leftClaw.setPosition(0);
-                rightClaw.setPosition(1);
+                //clamp down
+                Clamp.setPosition(0);
+
             }
-            if(gamepad2.b=true&& gamepad2.b){
-                leftClaw.setPosition(1);
-                rightClaw.setPosition(0);
+            if(gamepad2.a){
+                //clamp up
+               Clamp.setPosition(1);
+
             }
         }
         // Potentially correct Arm and Linear Slide code
@@ -53,6 +53,8 @@ public class CSTeleop extends LinearOpMode{
 
         Arm.setPosition(0);
 
+
+
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad2.dpad_up&& linearSlide.getCurrentPosition() < 1900 ) {
@@ -66,11 +68,20 @@ public class CSTeleop extends LinearOpMode{
             }
 
             if (gamepad2.dpad_right) {
+                //deploy position
                 Arm.setPosition(0.5);
             }
             else if (gamepad2.dpad_left) {
+                //collect position
                 Arm.setPosition(0);
             }
+
+            if(gamepad2.a &&linearSlide.getCurrentPosition() < 120){
+
+
+
+            }
+
             telemetry.addData("encoder",linearSlide.getCurrentPosition());
             telemetry.update();
         }

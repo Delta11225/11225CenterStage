@@ -36,4 +36,8 @@ public abstract class Constants {
 
     public final static double lowestDump = 1100;
     public final static int motivationQuantity = 4;
+
+    public static double getLiftEncoderMax() {
+        return 0;
+    }
 }
