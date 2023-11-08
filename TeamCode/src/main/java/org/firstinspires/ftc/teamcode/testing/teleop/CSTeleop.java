@@ -24,37 +24,52 @@ public class CSTeleop extends LinearOpMode {
         linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
         linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linearSlide.setDirection(DcMotor.Direction.REVERSE);
+        linearSlide.setDirection(DcMotor.Direction.FORWARD);
         linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        // Initialize Motors
+
+        //collect position
+        Arm.setPosition(0.35);
+
+
         waitForStart();
 
         while (opModeIsActive()) {
+
+            // Linear slide
+            if (gamepad2.dpad_up&& linearSlide.getCurrentPosition() < 4100 ) {
+                linearSlide.setPower(0.75);
+            } else if (gamepad2.dpad_down && linearSlide.getCurrentPosition() > 0) {
+                linearSlide.setPower(-0.75);
+            } else {
+                linearSlide.setPower(0.0);
+            }
+
+            // Collector Clamp
             if (gamepad2.b) {
                 //clamp down
                 Clamp.setPosition(0.75);
-
             }
             if (gamepad2.a) {
                 //clamp up
                 Clamp.setPosition(1);
-
             }
 
+            // Arm
             if (gamepad2.dpad_right) {
-                //deploy position
+                //collect position
                 Arm.setPosition(0.35);
             } else if (gamepad2.dpad_left) {
-                //collect position
+                //deploy position
                 Arm.setPosition(0.07);
             }
+            telemetry.addData("encoder",linearSlide.getCurrentPosition());
+            telemetry.update();
         }
-        // Potentially correct Arm and Linear Slide code
-
-
     }
 }
 

@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -26,6 +27,8 @@ import java.util.Locale;
 public class TeleopTest extends LinearOpMode {
 
     HardwareCC robot;
+
+
 
     BNO055IMU imu;
     Orientation angles;
@@ -64,6 +67,11 @@ public class TeleopTest extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+
+
+
+
+
         composeTelemetry();
 
         robot = new HardwareCC(hardwareMap);
@@ -74,12 +82,20 @@ public class TeleopTest extends LinearOpMode {
         robot.rearRight.setPower(0);
         //robot.dumpServo.setPosition(0);
 
-
+        robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
+        robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         robot.frontLeft.setDirection(DcMotor.Direction.FORWARD);
         robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
         robot.rearLeft.setDirection(DcMotor.Direction.FORWARD);
         robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
+
+        // Initialize Motors
+
+        //collect position
+        robot.Arm.setPosition(0.35);
 
      
 
@@ -181,7 +197,35 @@ public class TeleopTest extends LinearOpMode {
     public void peripheralMove(){
         
         //code for peripheral systems
-        
+        // Linear slide
+        if (gamepad2.dpad_up&& robot.linearSlide.getCurrentPosition() < 4100 ) {
+            robot.linearSlide.setPower(0.75);
+        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > 0) {
+            robot.linearSlide.setPower(-0.75);
+        } else {
+            robot.linearSlide.setPower(0.0);
+        }
+
+        // Collector Clamp
+        if (gamepad2.b) {
+            //clamp down
+            robot.Clamp.setPosition(0.75);
+        }
+        if (gamepad2.a) {
+            //clamp up
+            robot.Clamp.setPosition(1);
+        }
+
+        // Arm
+        if (gamepad2.dpad_right) {
+            //collect position
+            robot.Arm.setPosition(0.35);
+        } else if (gamepad2.dpad_left) {
+            //deploy position
+            robot.Arm.setPosition(0.07);
+        }
+        telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
+        telemetry.update();
     }
 
 

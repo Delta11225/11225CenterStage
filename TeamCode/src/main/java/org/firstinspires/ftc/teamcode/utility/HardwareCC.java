@@ -54,6 +54,10 @@ public class HardwareCC {
     public DcMotor rearRight = null;
     public DcMotor frontLeft = null;
     public DcMotor frontRight = null;
+
+    public Servo Clamp;
+    public Servo Arm;
+    public DcMotor linearSlide;
     public WebcamName logitechWebcam = null;
     public DcMotor towerMotor = null;
     public Servo dumpServo = null;
@@ -78,6 +82,13 @@ public class HardwareCC {
 
     public HardwareCC(HardwareMap hardwareMap) {
         // Define and initialize motors
+
+        Clamp = hardwareMap.get(Servo.class, "clamp");
+        Arm = hardwareMap.get(Servo.class, "arm");
+
+        linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
+
+
         // NEVER DO THIS
 //        try {
         rearLeft = hardwareMap.dcMotor.get("rear_left");
