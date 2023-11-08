@@ -73,13 +73,13 @@ public class BlueRedDetectorThresh2Object extends LinearOpMode {
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
-/*
+
         //code needed for camera to display on FTC Dashboard
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
         FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-*/
+
 
         telemetry.addData("Values",    valMid+"   "+valRight);
         telemetry.addData("ValuesR Raw",   +valMidCr+"   "+valRightCr);
@@ -159,16 +159,15 @@ public class BlueRedDetectorThresh2Object extends LinearOpMode {
     @Override
     public Mat processFrame(Mat input)
     {
-        Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
-      //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
-        Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
-        Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
-      Imgproc.threshold(CbMat, thresholdMatCb, 160, 255, Imgproc.THRESH_BINARY);
+        Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb); // Converts RGB to YCrCb
+        Core.extractChannel(yCbCr, CrMat, 1); // Extracts Cr channel as black and white RGB
+        Core.extractChannel(yCbCr, CbMat, 2); // Extracts Cb channel as black and white RGB
+        Imgproc.threshold(CbMat, thresholdMatCb, 160, 255, Imgproc.THRESH_BINARY);
         Imgproc.threshold(CrMat, thresholdMatCr, 160, 255, Imgproc.THRESH_BINARY);
-        //any pixel with a hue value less than 102 is being set to 0 (yellow)
-        //any pixel with a hue value greater than 102 is being set to 255(blue)
-        //Then swaps the blue and the yellows with the binary inv line
-        CbMat.copyTo(all);//copies mat object
+        // Any pixel with a hue value less than 160 is set to 0 (black)
+        // Any pixel with a hue value greater than 160 is set to 255 (white)
+        // Then swaps the blue and the yellows with the binary inv line
+        thresholdMatCb.copyTo(all);//copies mat object
 
         //get values from Cr Channel Raw
         double[] pixMidCr = CrMat.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
