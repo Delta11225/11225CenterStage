@@ -138,14 +138,14 @@ public class BlueRedDetector2Ob extends LinearOpMode {
     public Mat processFrame(Mat input)
     {
         Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
-      //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
-        Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
+        Core.extractChannel(yCbCr, CrMat, 1);//extracts cr channel as black and white RGB
         Core.extractChannel(yCbCr, CbMat, 2);//extracts cb channel as black and white RGB
       Imgproc.threshold(CbMat, thresholdMatCb, 150, 255, Imgproc.THRESH_BINARY);
+       //anypixel with a hue value less than 150 is set to 0 (not blue)
+       //any pixel with a hue value greater than 150 is set to 255 (blue)
         Imgproc.threshold(CrMat, thresholdMatCr, 150, 255, Imgproc.THRESH_BINARY);
-        //any pixel with a hue value less than 102 is being set to 0 (yellow)
-        //any pixel with a hue value greater than 102 is being set to 255(blue)
-        //Then swaps the blue and the yellows with the binary inv line
+        //any pixel with a hue value of less than 150 is set to 0 (not red)
+        //any pixel with a hue value greater than 150 is se to 255 (red)
         CrMat.copyTo(all);//copies mat object
 
         //get values from frame
