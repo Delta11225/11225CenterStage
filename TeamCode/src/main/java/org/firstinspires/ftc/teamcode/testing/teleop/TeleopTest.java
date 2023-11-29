@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -97,7 +98,7 @@ public class TeleopTest extends LinearOpMode {
         //collect position
         robot.Arm.setPosition(0.35);
 
-     
+        robot.Clamp.setPosition(1);
 
         // End init phase
         waitForStart();
@@ -207,26 +208,42 @@ public class TeleopTest extends LinearOpMode {
         }
 
         // Collector Clamp
-        if (gamepad2.b) {
+        if (gamepad2.right_bumper) {
             //clamp down
             robot.Clamp.setPosition(0.75);
         }
-        if (gamepad2.a) {
+        if (gamepad2.left_bumper) {
             //clamp up
             robot.Clamp.setPosition(1);
+            sleep(1000);
         }
-
+        //Automated arm deployment
+        if (gamepad2.a) {
+            
+        }
         // Arm
         if (gamepad2.dpad_right) {
             //collect position
             robot.Arm.setPosition(0.35);
-        } else if (gamepad2.dpad_left) {
+        } else if (gamepad2.dpad_left && robot.linearSlide.getCurrentPosition() > 2000) {
             //deploy position
             robot.Arm.setPosition(0.07);
         }
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
         telemetry.update();
+
+
+        ///// Clamp Autograb
+
+        if (robot.Clamp.getPosition() == 1 && robot.Distance.getDistance(DistanceUnit.CM) < 1) {
+            telemetry.addData("Position", "Closed");
+            telemetry.update();
+            robot.Clamp.setPosition(0.75);
+            sleep(1000);
+        }
     }
+
+
 
 
 

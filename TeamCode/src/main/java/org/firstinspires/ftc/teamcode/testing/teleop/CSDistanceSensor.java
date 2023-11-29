@@ -21,15 +21,15 @@ public class CSDistanceSensor extends LinearOpMode {
         // Claws open and close
         Clamp = hardwareMap.get(Servo.class, "clamp");
         Distance = hardwareMap.get(DistanceSensor.class, "distance");
-
+        Clamp.setPosition(1);
         waitForStart();
         while (opModeIsActive()) {
-
-
-            if (Clamp.getPosition() == 1 && Distance.getDistance(DistanceUnit.CM) > 3) {
-
+            if (Clamp.getPosition() == 1 && Distance.getDistance(DistanceUnit.CM) < 1) {
+                telemetry.addData("Position", "Closed");
+                telemetry.update();
+                Clamp.setPosition(0);
+                sleep(1000);
             }
-
         }
     }
 }
