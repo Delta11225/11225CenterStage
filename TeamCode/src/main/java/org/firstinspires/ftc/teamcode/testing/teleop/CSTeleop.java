@@ -50,11 +50,11 @@ public class CSTeleop extends LinearOpMode {
             }
 
             // Collector Clamp
-            if (gamepad2.b) {
+            if (gamepad2.right_bumper) {
                 //clamp down
                 Clamp.setPosition(0.75);
             }
-            if (gamepad2.a) {
+            if (gamepad2.left_bumper) {
                 //clamp up
                 Clamp.setPosition(1);
             }
@@ -69,6 +69,35 @@ public class CSTeleop extends LinearOpMode {
             }
             telemetry.addData("encoder",linearSlide.getCurrentPosition());
             telemetry.update();
+
+            // Arm Auto
+
+            if(gamepad2.x) {
+                linearSlide.setTargetPosition(2771);
+                linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlide.setPower(1);
+                while(linearSlide.isBusy()){
+
+                }
+                Arm.setPosition(0.07);
+            }
+            if(gamepad2.y){
+                linearSlide.setTargetPosition(4109);
+                linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linearSlide.setPower(1);
+                while(linearSlide.isBusy()){
+
+                }
+                Arm.setPosition(0.07);
+            }
+            if(gamepad2.a){
+                Arm.setPosition(0.35);
+                linearSlide.setTargetPosition(0);
+                linearSlide.setPower(1);
+                while(linearSlide.isBusy()){
+
+                }
+            }
         }
     }
 }

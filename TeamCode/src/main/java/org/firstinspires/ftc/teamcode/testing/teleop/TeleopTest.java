@@ -218,9 +218,36 @@ public class TeleopTest extends LinearOpMode {
             sleep(1000);
         }
         //Automated arm deployment
-        if (gamepad2.a) {
-            
+        // Arm Auto
+
+        if(gamepad2.x) {
+            robot.linearSlide.setTargetPosition(2771);
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.linearSlide.setPower(1);
+            while(robot.linearSlide.isBusy()){
+
+            }
+            robot.Arm.setPosition(0.07);
         }
+        if(gamepad2.y){
+            robot.linearSlide.setTargetPosition(4109);
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.linearSlide.setPower(1);
+            while(robot.linearSlide.isBusy()){
+
+            }
+            robot.Arm.setPosition(0.07);
+        }
+        if(gamepad2.a){
+            robot.Arm.setPosition(0.35);
+            robot.linearSlide.setTargetPosition(0);
+            robot.linearSlide.setPower(1);
+            while(robot.linearSlide.isBusy()){
+
+            }
+        }
+
+
         // Arm
         if (gamepad2.dpad_right) {
             //collect position
