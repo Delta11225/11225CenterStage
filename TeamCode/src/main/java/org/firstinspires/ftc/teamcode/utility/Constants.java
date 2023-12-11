@@ -40,4 +40,5 @@ public abstract class Constants {
     public static double getLiftEncoderMax() {
         return 0;
     }
+
 }

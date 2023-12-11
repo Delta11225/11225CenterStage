@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.utility;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,6 +57,7 @@ public class HardwareCC {
     public DcMotor frontRight = null;
 
     public Servo Clamp;
+    public DistanceSensor Distance;
     public Servo Arm;
     public DcMotor linearSlide;
     public WebcamName logitechWebcam = null;
@@ -87,6 +89,7 @@ public class HardwareCC {
         Arm = hardwareMap.get(Servo.class, "arm");
 
         linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
+        Distance = hardwareMap.get(DistanceSensor.class, "distance");
 
 
         // NEVER DO THIS
