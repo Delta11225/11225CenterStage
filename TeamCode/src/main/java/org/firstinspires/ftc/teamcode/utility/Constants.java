@@ -41,4 +41,18 @@ public abstract class Constants {
         return 0;
     }
 
+
+    public final static double armCollectPosition = 0.93;
+    public final static double armScoringPosition = 0.6;
+
+    public final static double maxLinearSlidePostion = 4100;
+    public final static double linearSlideUpPower = 0.75;
+    public final static double minLinearSlidePosition = 0;
+    public final static double linearSlideDownPower = -0.75;
+    public final static int linearSlideAutomatedDeployLow = 2771;
+    public final static int linearSlideAutomatedDeployHigh = 4109;
+
+    public final static double clampDownPosition = 0.75;
+    public final static double clampUpPosition = 1;
+
 }

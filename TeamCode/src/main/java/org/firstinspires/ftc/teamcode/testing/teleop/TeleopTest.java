@@ -1,5 +1,16 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampDownPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampUpPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideDownPower;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideUpPower;
+import static org.firstinspires.ftc.teamcode.utility.Constants.maxLinearSlidePostion;
+import static org.firstinspires.ftc.teamcode.utility.Constants.minLinearSlidePosition;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -96,9 +107,9 @@ public class TeleopTest extends LinearOpMode {
         // Initialize Motors
 
         //collect position
-        robot.Arm.setPosition(0.35);
+        robot.Arm.setPosition(Constants.armCollectPosition);
 
-        robot.Clamp.setPosition(1);
+        robot.Clamp.setPosition(clampUpPosition);
 
         // End init phase
         waitForStart();
@@ -199,10 +210,10 @@ public class TeleopTest extends LinearOpMode {
         
         //code for peripheral systems
         // Linear slide
-        if (gamepad2.dpad_up&& robot.linearSlide.getCurrentPosition() < 4100 ) {
-            robot.linearSlide.setPower(0.75);
-        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > 0) {
-            robot.linearSlide.setPower(-0.75);
+        if (gamepad2.dpad_up&& robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
+            robot.linearSlide.setPower(linearSlideUpPower);
+        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > minLinearSlidePosition) {
+            robot.linearSlide.setPower(linearSlideDownPower);
         } else {
             robot.linearSlide.setPower(0.0);
         }
@@ -210,36 +221,39 @@ public class TeleopTest extends LinearOpMode {
         // Collector Clamp
         if (gamepad2.right_bumper) {
             //clamp down
-            robot.Clamp.setPosition(0.75);
+            robot.Clamp.setPosition(clampDownPosition);
         }
         if (gamepad2.left_bumper) {
             //clamp up
-            robot.Clamp.setPosition(1);
+            robot.Clamp.setPosition(clampUpPosition);
             sleep(1000);
         }
-        //Automated arm deployment
-        // Arm Auto
 
+        //////////////////////Automated arm deployment///////////////////////////////////
+
+        /////Automated deploy to LOW
         if(gamepad2.x) {
-            robot.linearSlide.setTargetPosition(2771);
+            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
             while(robot.linearSlide.isBusy()){
 
             }
-            robot.Arm.setPosition(0.07);
+            robot.Arm.setPosition(armScoringPosition);
         }
+        ////Automated deploy to HIGH
         if(gamepad2.y){
-            robot.linearSlide.setTargetPosition(4109);
+            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
             while(robot.linearSlide.isBusy()){
 
             }
-            robot.Arm.setPosition(0.07);
+            robot.Arm.setPosition(armScoringPosition);
         }
+        ///Return to Arm collect position
         if(gamepad2.a){
-            robot.Arm.setPosition(0.35);
+            robot.Arm.setPosition(armCollectPosition);
             robot.linearSlide.setTargetPosition(0);
             robot.linearSlide.setPower(1);
             while(robot.linearSlide.isBusy()){
@@ -248,13 +262,14 @@ public class TeleopTest extends LinearOpMode {
         }
 
 
-        // Arm
+        // Arm MANUAL movement
         if (gamepad2.dpad_right) {
             //collect position
-            robot.Arm.setPosition(0.35);
-        } else if (gamepad2.dpad_left && robot.linearSlide.getCurrentPosition() > 2000) {
-            //deploy position
-            robot.Arm.setPosition(0.07);
+            robot.Arm.setPosition(armCollectPosition);
+        } else if (gamepad2.dpad_left ) {
+            //&& robot.linearSlide.getCurrentPosition() > 2000
+            //deploy or scoring position
+            robot.Arm.setPosition(armScoringPosition);
         }
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
         telemetry.update();
@@ -266,6 +281,8 @@ public class TeleopTest extends LinearOpMode {
             telemetry.addData("Position", "Closed");
             telemetry.update();
             robot.Clamp.setPosition(0.75);
+
+            gamepad2.rumble(250);//Rumble work
             sleep(1000);
         }
     }
