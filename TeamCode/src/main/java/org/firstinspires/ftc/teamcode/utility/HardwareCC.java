@@ -58,15 +58,13 @@ public class HardwareCC {
 
     public Servo Clamp;
     public DistanceSensor Distance;
+
+    public DistanceSensor RobotDistance;
     public Servo Arm;
     public DcMotor linearSlide;
+    public Servo Launcher;
     public WebcamName logitechWebcam = null;
-    public DcMotor towerMotor = null;
-    public Servo dumpServo = null;
-    public Servo tseServo = null;
-    public DcMotor collectionMotor = null;
-    public DcMotor liftMotor = null;
-    public ColorSensor colorSensor;
+
 
     private BNO055IMU imu;
 
@@ -87,9 +85,10 @@ public class HardwareCC {
 
         Clamp = hardwareMap.get(Servo.class, "clamp");
         Arm = hardwareMap.get(Servo.class, "arm");
-
+        Launcher = hardwareMap.get(Servo.class, "launcher");
         linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
         Distance = hardwareMap.get(DistanceSensor.class, "distance");
+        RobotDistance = hardwareMap.get(DistanceSensor.class, "robot_distance");
 
 
         // NEVER DO THIS

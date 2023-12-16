@@ -13,23 +13,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class CSDistanceSensor extends LinearOpMode {
     // Claw open and close
-    private Servo Clamp;
+
     private DistanceSensor Distance;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Claws open and close
-        Clamp = hardwareMap.get(Servo.class, "clamp");
-        Distance = hardwareMap.get(DistanceSensor.class, "distance");
-        Clamp.setPosition(1);
+
+        Distance = hardwareMap.get(DistanceSensor.class, "robot_distance");
+
         waitForStart();
         while (opModeIsActive()) {
-            if (Clamp.getPosition() == 1 && Distance.getDistance(DistanceUnit.CM) < 1) {
-                telemetry.addData("Position", "Closed");
+
+                telemetry.addData("Distance", Distance.getDistance(DistanceUnit.CM));
                 telemetry.update();
-                Clamp.setPosition(0);
-                sleep(1000);
-            }
+
+
         }
     }
 }

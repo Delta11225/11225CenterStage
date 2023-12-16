@@ -25,15 +25,17 @@ public class DroneTest extends LinearOpMode {
         telemetry = dashboard.getTelemetry();
         //FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-//Init that the position is at 0.4
-        Launcher.setPosition(0.4);
+//Init that the position is at 0.8 (hold position)
+        Launcher.setPosition(0.8);
 
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.b) {
-                Launcher.setPosition(0);
+                //hold
+                Launcher.setPosition(0.8);
             }
             if (gamepad1.a) {
+                //launch
                 Launcher.setPosition(1);
             }
                 telemetry.addData("status", "running");

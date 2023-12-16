@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
 import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampDownPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampUpPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.collectPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideDownPower;
@@ -47,6 +49,7 @@ public class TeleopTest extends LinearOpMode {
     Acceleration gravity;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime lastSlideDown = new ElapsedTime();
 
     double frontLeft;
     double rearLeft;
@@ -79,11 +82,6 @@ public class TeleopTest extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-
-
-
-
-
         composeTelemetry();
 
         robot = new HardwareCC(hardwareMap);
@@ -92,7 +90,7 @@ public class TeleopTest extends LinearOpMode {
         robot.frontRight.setPower(0);
         robot.rearLeft.setPower(0);
         robot.rearRight.setPower(0);
-        //robot.dumpServo.setPosition(0);
+
 
         robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -106,10 +104,14 @@ public class TeleopTest extends LinearOpMode {
 
         // Initialize Motors
 
-        //collect position
+        //arm set to collect position
         robot.Arm.setPosition(Constants.armCollectPosition);
+        //clamp set to open position
+        robot.Clamp.setPosition(clampOpenPosition);
 
-        robot.Clamp.setPosition(clampUpPosition);
+        robot.Launcher.setPosition(0.8);
+
+
 
         // End init phase
         waitForStart();
@@ -184,17 +186,21 @@ public class TeleopTest extends LinearOpMode {
         telemetry.addData("front right: ", frontRight);
 
         // Handle speed control
-        if (ControlConfig.fast){
+        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 7) {
+            powerMultiplier = Constants.superSlowMultiplier;
+            telemetry.addLine("slow");
+        } else if (ControlConfig.fast){
             powerMultiplier = Constants.fastMultiplier;
             telemetry.addLine("fast");
         } else if (ControlConfig.slow) {
             powerMultiplier = Constants.slowMultiplier;
             telemetry.addLine("slow");
-        } else {
+
+        }else{
             powerMultiplier = Constants.normalMultiplier;
             telemetry.addLine("normal");
         }
-
+        telemetry.addData("robot distance",robot.RobotDistance.getDistance(DistanceUnit.CM));
         telemetry.update();
 
 
@@ -209,30 +215,62 @@ public class TeleopTest extends LinearOpMode {
     public void peripheralMove(){
         
         //code for peripheral systems
-        // Linear slide
-        if (gamepad2.dpad_up&& robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
+/*
+        // Linear slide manual
+        if (gamepad2.dpad_up && robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.linearSlide.setPower(linearSlideUpPower);
         } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > minLinearSlidePosition) {
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.linearSlide.setPower(linearSlideDownPower);
         } else {
             robot.linearSlide.setPower(0.0);
         }
+  */
 
-        // Collector Clamp
+  /*
+                // Arm MANUAL movement
+        if (gamepad2.dpad_right) {
+            //collect position
+            robot.Arm.setPosition(armCollectPosition);
+        } else if (gamepad2.dpad_left ) {
+            //&& robot.linearSlide.getCurrentPosition() > 2000
+            //deploy or scoring position
+            robot.Arm.setPosition(armScoringPosition);
+        }
+*/
+        // Collector Clamp Manual
         if (gamepad2.right_bumper) {
             //clamp down
-            robot.Clamp.setPosition(clampDownPosition);
+            robot.Clamp.setPosition(clampClosedPosition);
         }
         if (gamepad2.left_bumper) {
             //clamp up
-            robot.Clamp.setPosition(clampUpPosition);
+            robot.Clamp.setPosition(clampOpenPosition);
+            sleep(500);
+        }
+
+        ///// Clamp Autograb
+
+        if (robot.Clamp.getPosition() == clampOpenPosition && robot.Distance.getDistance(DistanceUnit.CM) < 1) {
+            telemetry.addData("Position", "Closed");
+            telemetry.update();
+            robot.Clamp.setPosition(0.75);
+
+            gamepad2.rumble(250);//Rumble work
             sleep(1000);
+            if (robot.linearSlide.getCurrentPosition()<1000) {
+                robot.Arm.setPosition(armHoldPosition);
+            }
         }
 
         //////////////////////Automated arm deployment///////////////////////////////////
 
         /////Automated deploy to LOW
-        if(gamepad2.x) {
+        if(gamepad2.x &&  robot.Clamp.getPosition() != clampOpenPosition) {
+            if (robot.linearSlide.getCurrentPosition()<2000){
+                robot.Arm.setPosition(armCollectPosition);
+            }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
@@ -242,49 +280,46 @@ public class TeleopTest extends LinearOpMode {
             robot.Arm.setPosition(armScoringPosition);
         }
         ////Automated deploy to HIGH
-        if(gamepad2.y){
+        if(gamepad2.y &&  robot.Clamp.getPosition() != clampOpenPosition){
+            if (robot.linearSlide.getCurrentPosition()<2000){
+                robot.Arm.setPosition(armCollectPosition);
+            }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
             while(robot.linearSlide.isBusy()){
-
+                //waits for arm to get to position
             }
             robot.Arm.setPosition(armScoringPosition);
         }
         ///Return to Arm collect position
-        if(gamepad2.a){
+        if(gamepad2.a &&  robot.Clamp.getPosition() == clampOpenPosition){//add distance sensor to this later
+            lastSlideDown.reset();
             robot.Arm.setPosition(armCollectPosition);
+            robot.Clamp.setPosition(clampClosedPosition);
+            sleep(750);
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setTargetPosition(0);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()){
-
+            while(robot.linearSlide.isBusy()&&(lastSlideDown.seconds() < 3)){
+                telemetry.addData("LinearSlideEncoder",robot.linearSlide.getCurrentPosition());
+                telemetry.addLine("Stuck in loop");
+                telemetry.update();
             }
+            telemetry.addData("LinearSlideEncoder",robot.linearSlide.getCurrentPosition());
+            telemetry.update();
+            robot.linearSlide.setPower(0);
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.Clamp.setPosition(clampOpenPosition);
         }
 
 
-        // Arm MANUAL movement
-        if (gamepad2.dpad_right) {
-            //collect position
-            robot.Arm.setPosition(armCollectPosition);
-        } else if (gamepad2.dpad_left ) {
-            //&& robot.linearSlide.getCurrentPosition() > 2000
-            //deploy or scoring position
-            robot.Arm.setPosition(armScoringPosition);
-        }
+
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
         telemetry.update();
 
 
-        ///// Clamp Autograb
 
-        if (robot.Clamp.getPosition() == 1 && robot.Distance.getDistance(DistanceUnit.CM) < 1) {
-            telemetry.addData("Position", "Closed");
-            telemetry.update();
-            robot.Clamp.setPosition(0.75);
-
-            gamepad2.rumble(250);//Rumble work
-            sleep(1000);
-        }
     }
 
 
