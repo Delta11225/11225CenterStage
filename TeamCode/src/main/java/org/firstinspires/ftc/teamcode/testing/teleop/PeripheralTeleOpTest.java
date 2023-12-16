@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
-import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class CSTeleop extends LinearOpMode {
+@Disabled
+public class PeripheralTeleOpTest extends LinearOpMode {
     // Claw open and close
     private Servo Clamp;
     private Servo Arm;
