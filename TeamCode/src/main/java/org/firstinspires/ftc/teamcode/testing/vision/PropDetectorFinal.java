@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.testing.vision;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,7 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 //@Disabled
 @Autonomous
-public class BlueRedDetector2Ob extends LinearOpMode {
+public class PropDetectorFinal extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     //private Servo servoTest;

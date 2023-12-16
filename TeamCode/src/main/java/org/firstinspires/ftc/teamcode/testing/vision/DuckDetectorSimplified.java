@@ -18,8 +18,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
-//@Disabled
+
 @Autonomous
+@Disabled
 public class DuckDetectorSimplified extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
