@@ -3,27 +3,29 @@ package org.firstinspires.ftc.teamcode.testing.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 @Disabled
-public class ArmTest extends LinearOpMode {
-   private DcMotor Arm;
+public class CollectionServoTest extends LinearOpMode {
+   private CRServo Collector;
    @Override
    public void runOpMode() {
-     Arm = hardwareMap.get(DcMotor.class, "arm");
-     Arm .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+     Collector = hardwareMap.get(CRServo.class, "collector");
+
       waitForStart();
       while (opModeIsActive()) {
          if (gamepad1.y) {
-            Arm.setPower(0.5);
+            Collector.setPower(1);
+
          } else if (gamepad1.a){
-            Arm.setPower(-0.5);
+             Collector.setPower(-1);
          } else {
-            Arm.setPower(0.0);
+             Collector.setPower(0);
          }
-         telemetry.addData("encoder",Arm.getCurrentPosition());
+         telemetry.addData("collector power",Collector.getPower());
          telemetry.update();
       }
    }

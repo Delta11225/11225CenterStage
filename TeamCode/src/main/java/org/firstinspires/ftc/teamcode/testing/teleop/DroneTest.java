@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp
+@Disabled
 public class DroneTest extends LinearOpMode {
 
     private Servo Launcher;
@@ -25,15 +27,17 @@ public class DroneTest extends LinearOpMode {
         telemetry = dashboard.getTelemetry();
         //FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
-//Init that the position is at 0.4
-        Launcher.setPosition(0.4);
+//Init that the position is at 0.8 (hold position)
+        Launcher.setPosition(0.8);
 
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.b) {
-                Launcher.setPosition(0);
+                //hold
+                Launcher.setPosition(0.8);
             }
             if (gamepad1.a) {
+                //launch
                 Launcher.setPosition(1);
             }
                 telemetry.addData("status", "running");

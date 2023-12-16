@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import java.util.Locale;
 
 @TeleOp
+@Disabled
 public class PixelClawTestSensor extends LinearOpMode {
     DistanceSensor sensorDistance;
     private Servo leftClaw;

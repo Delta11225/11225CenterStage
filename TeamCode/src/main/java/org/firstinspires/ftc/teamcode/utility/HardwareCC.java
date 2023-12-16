@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.utility;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -54,13 +55,17 @@ public class HardwareCC {
     public DcMotor rearRight = null;
     public DcMotor frontLeft = null;
     public DcMotor frontRight = null;
+
+    public Servo Clamp;
+    public DistanceSensor Distance;
+    public DistanceSensor RobotDistance;
+    public Servo Arm;
+    public DcMotor linearSlide;
+    public Servo Launcher;
+    public DcMotor leftScissor;
+    public DcMotor rightScissor;
     public WebcamName logitechWebcam = null;
-    public DcMotor towerMotor = null;
-    public Servo dumpServo = null;
-    public Servo tseServo = null;
-    public DcMotor collectionMotor = null;
-    public DcMotor liftMotor = null;
-    public ColorSensor colorSensor;
+
 
     private BNO055IMU imu;
 
@@ -78,6 +83,17 @@ public class HardwareCC {
 
     public HardwareCC(HardwareMap hardwareMap) {
         // Define and initialize motors
+
+        Clamp = hardwareMap.get(Servo.class, "clamp");
+        Arm = hardwareMap.get(Servo.class, "arm");
+        Launcher = hardwareMap.get(Servo.class, "launcher");
+        linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
+        Distance = hardwareMap.get(DistanceSensor.class, "distance");
+        RobotDistance = hardwareMap.get(DistanceSensor.class, "robot_distance");
+        leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
+        rightScissor = hardwareMap.get(DcMotor.class, "right_scissor");
+
+
         // NEVER DO THIS
 //        try {
         rearLeft = hardwareMap.dcMotor.get("rear_left");
