@@ -3,22 +3,21 @@ package org.firstinspires.ftc.teamcode.testing.teleop;
 import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armTrussHeight;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.collectPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideDownPower;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideUpPower;
-import static org.firstinspires.ftc.teamcode.utility.Constants.maxLinearSlidePostion;
-import static org.firstinspires.ftc.teamcode.utility.Constants.minLinearSlidePosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightRight;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -38,7 +37,7 @@ import java.util.Locale;
 
 @TeleOp(name="TeleOp test")
 //@Disabled
-public class TeleopTest extends LinearOpMode {
+public class CSTeleopFinal extends LinearOpMode {
 
     HardwareCC robot;
 
@@ -86,29 +85,44 @@ public class TeleopTest extends LinearOpMode {
 
         robot = new HardwareCC(hardwareMap);
 
+        //initialize drive motors
         robot.frontLeft.setPower(0);
         robot.frontRight.setPower(0);
         robot.rearLeft.setPower(0);
         robot.rearRight.setPower(0);
-
-
-        robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
-        robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         robot.frontLeft.setDirection(DcMotor.Direction.FORWARD);
         robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
         robot.rearLeft.setDirection(DcMotor.Direction.FORWARD);
         robot.rearRight.setDirection(DcMotor.Direction.REVERSE);
 
-        // Initialize Motors
+        //initialize linear slide motors
+        robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
+        robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.linearSlide.setPower(0);
+
+        //initialize scissor lift motors
+        robot.leftScissor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.leftScissor.setDirection(DcMotor.Direction.REVERSE);
+        robot.leftScissor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftScissor.setPower(0);
+
+        robot.rightScissor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightScissor.setDirection(DcMotor.Direction.REVERSE);
+        robot.rightScissor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightScissor.setPower(0);
+
+        // Initialize Servos
 
         //arm set to collect position
         robot.Arm.setPosition(Constants.armCollectPosition);
         //clamp set to open position
         robot.Clamp.setPosition(clampOpenPosition);
-
+        //drone launcher set to loaded position
         robot.Launcher.setPosition(0.8);
 
 
@@ -186,7 +200,9 @@ public class TeleopTest extends LinearOpMode {
         telemetry.addData("front right: ", frontRight);
 
         // Handle speed control
-        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 7) {
+        //TODO update robot distance sensor to V2 in config file
+        //TODO test values for slow mode distance threshold
+        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25) {
             powerMultiplier = Constants.superSlowMultiplier;
             telemetry.addLine("slow");
         } else if (ControlConfig.fast){
@@ -195,8 +211,7 @@ public class TeleopTest extends LinearOpMode {
         } else if (ControlConfig.slow) {
             powerMultiplier = Constants.slowMultiplier;
             telemetry.addLine("slow");
-
-        }else{
+        } else {
             powerMultiplier = Constants.normalMultiplier;
             telemetry.addLine("normal");
         }
@@ -215,37 +230,69 @@ public class TeleopTest extends LinearOpMode {
     public void peripheralMove(){
         
         //code for peripheral systems
-/*
-        // Linear slide manual
-        if (gamepad2.dpad_up && robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.linearSlide.setPower(linearSlideUpPower);
-        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > minLinearSlidePosition) {
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.linearSlide.setPower(linearSlideDownPower);
-        } else {
-            robot.linearSlide.setPower(0.0);
-        }
-  */
 
-  /*
-                // Arm MANUAL movement
-        if (gamepad2.dpad_right) {
-            //collect position
-            robot.Arm.setPosition(armCollectPosition);
-        } else if (gamepad2.dpad_left ) {
-            //&& robot.linearSlide.getCurrentPosition() > 2000
-            //deploy or scoring position
-            robot.Arm.setPosition(armScoringPosition);
+///////////////////////////////////GAMEPAD 1////////////////////////////////////
+
+        //launch drone
+        //press both triggers at the same time to launch drone
+        //two button command to eliminate accidental trigger
+        if (gamepad1.right_trigger > 0.7 && gamepad1.left_trigger > 0.7) {
+            //launch
+            robot.Launcher.setPosition(1);
         }
-*/
+
+        //scissor "HOOK" automation
+        //two button command to eliminate accidental trigger
+        if (gamepad1.b && gamepad1.dpad_left) {
+            robot.leftScissor.setTargetPosition(scissorHookHeightLeft);
+            robot.rightScissor.setTargetPosition(scissorHookHeightRight);
+            robot.leftScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftScissor.setPower(1);
+            robot.rightScissor.setPower(1);
+            while (robot.leftScissor.isBusy() || robot.rightScissor.isBusy()) {
+                telemetry.addData("left encoder", robot.leftScissor.getCurrentPosition());
+                telemetry.addData("right encoder", robot.rightScissor.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.leftScissor.setPower(0);
+            robot.rightScissor.setPower(0);
+            robot.leftScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        //scissor "LIFT" automation
+        //two button command to eliminate accidental trigger
+        if (gamepad1.x && gamepad1.dpad_right) {
+
+            robot.Arm.setPosition(armTrussHeight);
+
+            robot.leftScissor.setTargetPosition(scissorLiftHeightLeft);
+            robot.rightScissor.setTargetPosition(scissorLiftHeightRight);
+            robot.leftScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftScissor.setPower(1);
+            robot.rightScissor.setPower(1);
+            while (robot.leftScissor.isBusy() || robot.rightScissor.isBusy()) {
+                telemetry.addData("left encoder", robot.leftScissor.getCurrentPosition());
+                telemetry.addData("right encoder", robot.rightScissor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            robot.leftScissor.setPower(0);
+            robot.rightScissor.setPower(0);
+            robot.leftScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+///////////////////////////////////GAMEPAD 2////////////////////////////////////
         // Collector Clamp Manual
         if (gamepad2.right_bumper) {
-            //clamp down
+            //clamp closed
             robot.Clamp.setPosition(clampClosedPosition);
         }
         if (gamepad2.left_bumper) {
-            //clamp up
+            //clamp open
             robot.Clamp.setPosition(clampOpenPosition);
             sleep(500);
         }
@@ -264,7 +311,7 @@ public class TeleopTest extends LinearOpMode {
             }
         }
 
-        //////////////////////Automated arm deployment///////////////////////////////////
+//////////////////////Automated arm deployment///////////////////////////////////
 
         /////Automated deploy to LOW
         if(gamepad2.x &&  robot.Clamp.getPosition() != clampOpenPosition) {
@@ -313,13 +360,33 @@ public class TeleopTest extends LinearOpMode {
             robot.Clamp.setPosition(clampOpenPosition);
         }
 
-
-
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
         telemetry.update();
 
+        /*
+        // Linear slide manual
+        if (gamepad2.dpad_up && robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.linearSlide.setPower(linearSlideUpPower);
+        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > minLinearSlidePosition) {
+            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.linearSlide.setPower(linearSlideDownPower);
+        } else {
+            robot.linearSlide.setPower(0.0);
+        }
+  */
 
-
+  /*
+                // Arm MANUAL movement
+        if (gamepad2.dpad_right) {
+            //collect position
+            robot.Arm.setPosition(armCollectPosition);
+        } else if (gamepad2.dpad_left ) {
+            //&& robot.linearSlide.getCurrentPosition() > 2000
+            //deploy or scoring position
+            robot.Arm.setPosition(armScoringPosition);
+        }
+*/
     }
 
 

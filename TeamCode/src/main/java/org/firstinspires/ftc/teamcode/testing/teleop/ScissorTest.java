@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeight
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.utility.HardwareCC;
 
 @TeleOp
+@Disabled
 public class ScissorTest extends LinearOpMode {
     HardwareCC robot;
     private DcMotor leftScissor;

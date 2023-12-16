@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.testing.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp
+@Disabled
 public class DroneTest extends LinearOpMode {
 
     private Servo Launcher;

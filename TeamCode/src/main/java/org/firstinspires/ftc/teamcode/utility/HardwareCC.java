@@ -58,11 +58,12 @@ public class HardwareCC {
 
     public Servo Clamp;
     public DistanceSensor Distance;
-
     public DistanceSensor RobotDistance;
     public Servo Arm;
     public DcMotor linearSlide;
     public Servo Launcher;
+    public DcMotor leftScissor;
+    public DcMotor rightScissor;
     public WebcamName logitechWebcam = null;
 
 
@@ -89,6 +90,8 @@ public class HardwareCC {
         linearSlide = hardwareMap.get(DcMotor.class, "linear_slide");
         Distance = hardwareMap.get(DistanceSensor.class, "distance");
         RobotDistance = hardwareMap.get(DistanceSensor.class, "robot_distance");
+        leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
+        rightScissor = hardwareMap.get(DcMotor.class, "right_scissor");
 
 
         // NEVER DO THIS
