@@ -2,6 +2,8 @@
 package org.firstinspires.ftc.teamcode.testing.vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -57,8 +61,7 @@ public class BlueRedDetector2Ob extends LinearOpMode {
         //servoTest = hardwareMap.get(Servo.class, "servoTest");
         //servoTest.setPosition(0);
 
-        servoRight = hardwareMap.get(Servo.class, "servo_right");
-        servoLeft = hardwareMap.get(Servo.class, "servo_left");
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -87,31 +90,47 @@ public class BlueRedDetector2Ob extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        Pose2d startPose = new Pose2d(-36, 61.5, Math.toRadians(180));
+        drive.setPoseEstimate(startPose);
+
+        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(startPose)//left spike mark
+                .lineTo(new Vector2d(-36, 45))
+                .lineToLinearHeading(new Pose2d(-28, 31.5,Math.toRadians(225)))
+                .build();
+
+        TrajectorySequence traj2 = drive.trajectorySequenceBuilder(startPose)//center spike mark
+                .lineTo(new Vector2d(-36, 25.5))
+                .build();
+
+        TrajectorySequence traj3 = drive.trajectorySequenceBuilder(startPose)//right spike mark
+                .lineTo(new Vector2d(-36, 45))
+                .lineToLinearHeading(new Pose2d(-42.5, 31.5,Math.toRadians(135)))
+                .build();
 
         runtime.reset();
 
         if (valMidB == 255 || valMidR == 255) {
             telemetry.addData("Position", "Mid");
             telemetry.update();
-            // move to 90 degrees.
-            servoLeft.setPosition(0.2);
-            servoRight.setPosition(0.7);
-            sleep(1000);
+            // move to middle spike mark
+            drive.followTrajectorySequence(traj2);
+
         }
 
         if (valRightB == 255 || valRightR == 255) {
             telemetry.addData("Position", "Right");
             telemetry.update();
-            servoLeft.setPosition(0.2);
-            servoRight.setPosition(1);
-            sleep(1000);
+            // move to right spike mark
+            drive.followTrajectorySequence(traj3);
+
         }
 
         else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255){
             telemetry.addData("Position", "Left");
             telemetry.update();
-            servoLeft.setPosition(0);
-            servoRight.setPosition(0.7);
+           //move to left spike mark
+            drive.followTrajectorySequence(traj1);
+
         }
 
 
