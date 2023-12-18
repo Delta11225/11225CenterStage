@@ -1,10 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armTrussHeight;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightRight;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.Constants;
+import org.firstinspires.ftc.teamcode.utility.HardwareCC;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -25,8 +40,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 //@Disabled
 @Autonomous
 public class AutoBackBlue extends LinearOpMode {
-
+   HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
+
+   private final ElapsedTime lastSlideDown = new ElapsedTime();
    //private Servo servoTest;
    OpenCvCamera webcam;
 
@@ -51,12 +68,23 @@ public class AutoBackBlue extends LinearOpMode {
    private static float[] rightPos = {5.7f/8f+offsetX, 4f/8f+offsetY};
    //moves all rectangles right or left by amount. units are in ratio to monitor
 
-   public Servo Arm;
+   public boolean left = false;
+   public boolean center = false;
+   public boolean right = false;
 
    @Override
-   public void runOpMode()
-   {
-      Arm = hardwareMap.get(Servo.class, "arm");
+   public void runOpMode() {
+
+      robot = new HardwareCC(hardwareMap);
+
+      //initialize linear slide motors
+      robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
+      robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      robot.linearSlide.setPower(0);
+
+
 
       SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -70,7 +98,6 @@ public class AutoBackBlue extends LinearOpMode {
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
 
-
       //code needed for camera to display on FTC Dashboard
       FtcDashboard dashboard = FtcDashboard.getInstance();
       telemetry = dashboard.getTelemetry();
@@ -78,78 +105,152 @@ public class AutoBackBlue extends LinearOpMode {
       telemetry.update();
 
 
-      telemetry.addData("Values", valMid+"   "+valRight);
+      telemetry.addData("Values", valMid + "   " + valRight);
 
-      telemetry.addData("ValuesR", valMidR+"   "+valRightR);
+      telemetry.addData("ValuesR", valMidR + "   " + valRightR);
 
-      telemetry.addData("ValuesB", valMidB+"   "+valRightB);
+      telemetry.addData("ValuesB", valMidB + "   " + valRightB);
 
       telemetry.update();
-      Arm.setPosition(Constants.armHoldPosition);
+      robot.Clamp.setPosition(clampClosedPosition);
+      sleep(500);
+      robot.Arm.setPosition(Constants.armHoldPosition);
+
 
       waitForStart();
+      robot.Clamp.setPosition(clampClosedPosition);
       Pose2d startPose = new Pose2d(-36, 61.5, Math.toRadians(180));
       drive.setPoseEstimate(startPose);
+      Pose2d endPose = new Pose2d(2, 57.5, Math.toRadians(180));
 
       TrajectorySequence traj1 = drive.trajectorySequenceBuilder(startPose)//left spike mark
               .lineTo(new Vector2d(-36, 45))
-              .lineToLinearHeading(new Pose2d(-28, 31.5,Math.toRadians(225)))
-              .lineToLinearHeading(new Pose2d(-36, 45,Math.toRadians(180)))
+              .lineToLinearHeading(new Pose2d(-28, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(2, 57.5))
               .build();
 
       TrajectorySequence traj2 = drive.trajectorySequenceBuilder(startPose)//center spike mark
               .lineTo(new Vector2d(-36, 28.5))
-              .lineToLinearHeading(new Pose2d(-36, 56.5,Math.toRadians(180)))
+              .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .lineTo(new Vector2d(2, 57.5))
               .build();
 
       TrajectorySequence traj3 = drive.trajectorySequenceBuilder(startPose)//right spike mark
               .lineTo(new Vector2d(-36, 45))
-              .lineToLinearHeading(new Pose2d(-42.5, 31.5,Math.toRadians(135)))
-              .lineToLinearHeading(new Pose2d(-36, 45,Math.toRadians(180)))
+              .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
+              .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(2, 57.5))
               .build();
 
+      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(endPose)//center spike mark
+              .lineTo(new Vector2d(2, 39.5))
+              .lineTo(new Vector2d(3.5,39.5))
+              .build();
+
+      TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(endPose)//center spike mark
+              .lineTo(new Vector2d(2, 33.5))
+              .lineTo(new Vector2d(3.5,33.5))
+              .build();
+
+      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(endPose)//center spike mark
+              .lineTo(new Vector2d(2, 27.5))
+              .lineTo(new Vector2d(3.5,27.5))
+              .build();
+
+
+///////START OF ACTUAL MOVEMENT//////////////////////////////
       runtime.reset();
 
-      Arm.setPosition(Constants.armHoldPosition);
+      robot.Arm.setPosition(Constants.armHoldPosition);
+      robot.Clamp.setPosition(clampClosedPosition);
       sleep(500);
 
       if (valMidB == 255 || valMidR == 255) {
          telemetry.addData("Position", "Mid");
          telemetry.update();
+         center = true;
          // move to middle spike mark
          drive.followTrajectorySequence(traj2);
-
-      }
-
-      else if (valRightB == 255 || valRightR == 255) {
+      } else if (valRightB == 255 || valRightR == 255) {
          telemetry.addData("Position", "Right");
          telemetry.update();
+         right = true;
          // move to right spike mark
          drive.followTrajectorySequence(traj3);
 
-      }
-
-      else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255){
+      } else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255) {
          telemetry.addData("Position", "Left");
          telemetry.update();
+         left = true;
          //move to left spike mark
          drive.followTrajectorySequence(traj1);
 
       }
+      robot.Clamp.setPosition(clampClosedPosition);
 
+      if (left) {
+         drive.followTrajectorySequence(trajLeft);
+         deployPixel();
 
+      } else if (right) {
+         drive.followTrajectorySequence(trajRight);
+         deployPixel();
+      } else {
+         drive.followTrajectorySequence(trajMiddle);
+         deployPixel();
 
-
-      telemetry.update();
-      sleep(10000);
-      //call movement functions
-
+      }
    }
+
+   public void deployPixel() {
+      //initialize linear slide motors
+      robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
+      robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      robot.linearSlide.setPower(0);
+
+      robot.Clamp.setPosition(clampClosedPosition);
+      sleep(500);
+      robot.Arm.setPosition(armHoldPosition);
+      sleep(1000);
+      /////Automated deploy to LOW
+      robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+
+      }
+      robot.Arm.setPosition(armScoringPosition);
+      sleep(1000);
+      //open clamp
+      robot.Clamp.setPosition(clampOpenPosition);
+      sleep(500);
+      //return to ground
+      lastSlideDown.reset();
+      robot.Clamp.setPosition(clampClosedPosition);
+      robot.Arm.setPosition(armHoldPosition);
+      sleep(1500);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setTargetPosition(0);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
+         telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
+         telemetry.addLine("Stuck in loop");
+         telemetry.update();
+      }
+      telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
+      telemetry.update();
+      robot.linearSlide.setPower(0);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      robot.Arm.setPosition(armCollectPosition);
+      robot.Clamp.setPosition(clampOpenPosition);
+   }
+
+
 
    public class SamplePipeline extends OpenCvPipeline
    {

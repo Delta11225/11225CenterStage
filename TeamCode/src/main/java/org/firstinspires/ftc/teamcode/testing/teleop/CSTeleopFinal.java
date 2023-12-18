@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.utility.ControlConfig;
 
 import java.util.Locale;
 
-@TeleOp(name="TeleOp test")
+@TeleOp(name="CS TeleOp FINAL")
 //@Disabled
 public class CSTeleopFinal extends LinearOpMode {
 
@@ -173,8 +173,8 @@ public class CSTeleopFinal extends LinearOpMode {
         telemetry.addData("CurrentAngle", currentAngle);
         telemetry.addData("Theta", theta);
 
-        forward = ControlConfig.forward;
-        right = ControlConfig.right;
+        forward = ControlConfig.right;
+        right = ControlConfig.backward;
         clockwise = ControlConfig.clockwise;
 
         temp = (forward * Math.cos(theta) - right * Math.sin(theta));
@@ -202,10 +202,10 @@ public class CSTeleopFinal extends LinearOpMode {
         // Handle speed control
         //TODO update robot distance sensor to V2 in config file
         //TODO test values for slow mode distance threshold
-        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25) {
-            powerMultiplier = Constants.superSlowMultiplier;
-            telemetry.addLine("slow");
-        } else if (ControlConfig.fast){
+//        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25) {
+//            powerMultiplier = Constants.superSlowMultiplier;
+//            telemetry.addLine("slow");
+       if (ControlConfig.fast){
             powerMultiplier = Constants.fastMultiplier;
             telemetry.addLine("fast");
         } else if (ControlConfig.slow) {
@@ -290,11 +290,18 @@ public class CSTeleopFinal extends LinearOpMode {
         if (gamepad2.right_bumper) {
             //clamp closed
             robot.Clamp.setPosition(clampClosedPosition);
+            sleep(500);
+            if(robot.linearSlide.getCurrentPosition()<1000) {
+                robot.Arm.setPosition(armHoldPosition);
+            }
         }
         if (gamepad2.left_bumper) {
             //clamp open
             robot.Clamp.setPosition(clampOpenPosition);
             sleep(500);
+            if(robot.linearSlide.getCurrentPosition()<200){
+                robot.Arm.setPosition(armCollectPosition);
+            }
         }
 
         ///// Clamp Autograb
@@ -302,7 +309,7 @@ public class CSTeleopFinal extends LinearOpMode {
         if (robot.Clamp.getPosition() == clampOpenPosition && robot.Distance.getDistance(DistanceUnit.CM) < 1) {
             telemetry.addData("Position", "Closed");
             telemetry.update();
-            robot.Clamp.setPosition(0.75);
+            robot.Clamp.setPosition(clampClosedPosition);
 
             gamepad2.rumble(250);//Rumble work
             sleep(1000);
@@ -342,7 +349,7 @@ public class CSTeleopFinal extends LinearOpMode {
         ///Return to Arm collect position
         if(gamepad2.a &&  robot.Clamp.getPosition() == clampOpenPosition){//add distance sensor to this later
             lastSlideDown.reset();
-            robot.Arm.setPosition(armCollectPosition);
+            robot.Arm.setPosition(armHoldPosition);
             robot.Clamp.setPosition(clampClosedPosition);
             sleep(750);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -357,6 +364,7 @@ public class CSTeleopFinal extends LinearOpMode {
             telemetry.update();
             robot.linearSlide.setPower(0);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.Arm.setPosition(armCollectPosition);
             robot.Clamp.setPosition(clampOpenPosition);
         }
 
