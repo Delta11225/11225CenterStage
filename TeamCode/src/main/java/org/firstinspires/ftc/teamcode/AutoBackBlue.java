@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeight
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -23,6 +24,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.Constants;
@@ -92,7 +94,7 @@ public class AutoBackBlue extends LinearOpMode {
       webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
       webcam.openCameraDevice();
-      webcam.setPipeline(new AutoBackBlue.SamplePipeline());
+      webcam.setPipeline(new AutoBackBlue.PropDetectionPipeline());
 
       //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -112,89 +114,102 @@ public class AutoBackBlue extends LinearOpMode {
       telemetry.addData("ValuesB", valMidB + "   " + valRightB);
 
       telemetry.update();
-      robot.Clamp.setPosition(clampClosedPosition);
-      sleep(500);
-      robot.Arm.setPosition(Constants.armHoldPosition);
 
+      ////////////////////////////Trajectory Builder//////////////////////////////
 
-      waitForStart();
-      robot.Clamp.setPosition(clampClosedPosition);
       Pose2d startPose = new Pose2d(-36, 61.5, Math.toRadians(180));
       drive.setPoseEstimate(startPose);
-      Pose2d endPose = new Pose2d(2, 57.5, Math.toRadians(180));
 
-      TrajectorySequence traj1 = drive.trajectorySequenceBuilder(startPose)//left spike mark
-              .lineTo(new Vector2d(-36, 45))
+      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//center spike mark
+              .addDisplacementMarker(()->{
+                 robot.Clamp.setPosition(clampClosedPosition);
+              })
+              .addDisplacementMarker(()->{
+                 robot.Arm.setPosition(armHoldPosition);
+              })
+              .waitSeconds(1)
+              .lineTo(new Vector2d(-36, 45),
+                  SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                  SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+              )
               .lineToLinearHeading(new Pose2d(-28, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(2, 57.5))
+              .lineTo(new Vector2d(2, 39.5))
+              .lineTo(new Vector2d(3.5,39.5))
               .build();
 
-      TrajectorySequence traj2 = drive.trajectorySequenceBuilder(startPose)//center spike mark
+      TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
+              .addDisplacementMarker(()->{
+                 robot.Clamp.setPosition(clampClosedPosition);
+              })
+              .waitSeconds(1)
+              .addDisplacementMarker(()->{
+                 robot.Arm.setPosition(armHoldPosition);
+              })
+              .waitSeconds(1)
+              .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .lineTo(new Vector2d(2, 57.5))
+              .lineTo(new Vector2d(2, 33.5))
+              .lineTo(new Vector2d(3.5,33.5))
               .build();
 
-      TrajectorySequence traj3 = drive.trajectorySequenceBuilder(startPose)//right spike mark
+      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
+              .addDisplacementMarker(()->{
+                 robot.Clamp.setPosition(clampClosedPosition);
+              })
+              .waitSeconds(1)
+              .addDisplacementMarker(()->{
+                 robot.Arm.setPosition(armHoldPosition);
+              })
+              .waitSeconds(1)
               .lineTo(new Vector2d(-36, 45))
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(2, 57.5))
-              .build();
-
-      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(endPose)//center spike mark
-              .lineTo(new Vector2d(2, 39.5))
-              .lineTo(new Vector2d(3.5,39.5))
-              .build();
-
-      TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(endPose)//center spike mark
-              .lineTo(new Vector2d(2, 33.5))
-              .lineTo(new Vector2d(3.5,33.5))
-              .build();
-
-      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(endPose)//center spike mark
               .lineTo(new Vector2d(2, 27.5))
               .lineTo(new Vector2d(3.5,27.5))
               .build();
 
 
-///////START OF ACTUAL MOVEMENT//////////////////////////////
+      waitForStart();
+
       runtime.reset();
 
-      robot.Arm.setPosition(Constants.armHoldPosition);
-      robot.Clamp.setPosition(clampClosedPosition);
-      sleep(500);
+////////////PROP DETECTION//////////////////////////////////////////////////////////////
 
       if (valMidB == 255 || valMidR == 255) {
          telemetry.addData("Position", "Mid");
          telemetry.update();
          center = true;
          // move to middle spike mark
-         drive.followTrajectorySequence(traj2);
+
       } else if (valRightB == 255 || valRightR == 255) {
          telemetry.addData("Position", "Right");
          telemetry.update();
          right = true;
          // move to right spike mark
-         drive.followTrajectorySequence(traj3);
+
 
       } else if (valMidB != 255 && valRightR != 255 && valRightB != 255 && valMidR != 255) {
          telemetry.addData("Position", "Left");
          telemetry.update();
          left = true;
          //move to left spike mark
-         drive.followTrajectorySequence(traj1);
-
       }
-      robot.Clamp.setPosition(clampClosedPosition);
+
+      webcam.stopStreaming();
+      FtcDashboard.getInstance().stopCameraStream();
+
+///////START OF ACTUAL MOVEMENT//////////////////////////////
 
       if (left) {
          drive.followTrajectorySequence(trajLeft);
          deployPixel();
-
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
          deployPixel();
@@ -251,8 +266,7 @@ public class AutoBackBlue extends LinearOpMode {
    }
 
 
-
-   public class SamplePipeline extends OpenCvPipeline
+   public class PropDetectionPipeline extends OpenCvPipeline
    {
       Mat yCbCr = new Mat();
       //    Mat yMat = new Mat();
