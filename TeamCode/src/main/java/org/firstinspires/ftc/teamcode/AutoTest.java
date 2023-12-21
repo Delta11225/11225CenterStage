@@ -17,10 +17,13 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPositio
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 
 @Autonomous
 public class AutoTest extends LinearOpMode {
    HardwareCC robot;
+   public int slideZero;
    private ElapsedTime runtime = new ElapsedTime();
 
    private final ElapsedTime lastSlideDown = new ElapsedTime();
@@ -35,35 +38,50 @@ public class AutoTest extends LinearOpMode {
       robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
       robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       robot.linearSlide.setPower(0);
-
+      slideZero = robot.linearSlide.getCurrentPosition();
       waitForStart();
       deployPixel();
 
    }
 
    public void deployPixel() {
+
       robot.Clamp.setPosition(clampClosedPosition);
       sleep(500);
       robot.Arm.setPosition(armHoldPosition);
+      sleep(1000);
       /////Automated deploy to LOW
-      robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
+
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setPower(1);
       while (robot.linearSlide.isBusy()) {
-
       }
+      sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(1500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
       sleep(500);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(1500);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
       robot.Arm.setPosition(armHoldPosition);
-      sleep(1500);
+      sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setTargetPosition(0);
+      robot.linearSlide.setTargetPosition(slideZero);
       robot.linearSlide.setPower(1);
       while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());

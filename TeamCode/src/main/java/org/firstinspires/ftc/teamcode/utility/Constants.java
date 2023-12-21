@@ -25,6 +25,8 @@ public abstract class Constants {
     public final static double clampClosedPosition = 0.25;
     public final static double clampOpenPosition = 0.05;
 
+    public final static int linearSlideAutonomousDeploy = 2350;
+    public final static int linearSlideAutonomousDrop = 2000;
     public final static int linearSlideAutomatedDeployLow = 3000;//2771 old value
     public final static int linearSlideAutomatedDeployHigh = 4109;
 

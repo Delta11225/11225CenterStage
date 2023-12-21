@@ -8,6 +8,8 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPositi
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightRight;
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
@@ -40,7 +42,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 //@Disabled
-@Autonomous
+@Autonomous(preselectTeleOp = "CSTeleopFinal")
 public class AutoBackBlue extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
@@ -73,6 +75,8 @@ public class AutoBackBlue extends LinearOpMode {
    public boolean left = false;
    public boolean center = false;
    public boolean right = false;
+   public int slideZero;
+
 
    @Override
    public void runOpMode() {
@@ -85,6 +89,8 @@ public class AutoBackBlue extends LinearOpMode {
       robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
       robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       robot.linearSlide.setPower(0);
+      sleep(1500);
+      slideZero = robot.linearSlide.getCurrentPosition();
 
 
 
@@ -132,7 +138,7 @@ public class AutoBackBlue extends LinearOpMode {
                   SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                   SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
               )
-              .lineToLinearHeading(new Pose2d(-28, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(2, 57.5))
@@ -221,36 +227,43 @@ public class AutoBackBlue extends LinearOpMode {
    }
 
    public void deployPixel() {
-      //initialize linear slide motors
-      robot.linearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
-      robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      robot.linearSlide.setPower(0);
 
       robot.Clamp.setPosition(clampClosedPosition);
       sleep(500);
       robot.Arm.setPosition(armHoldPosition);
       sleep(1000);
       /////Automated deploy to LOW
-      robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
+
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setPower(1);
       while (robot.linearSlide.isBusy()) {
-
       }
+      sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(1500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
       sleep(500);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(1500);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
       robot.Arm.setPosition(armHoldPosition);
-      sleep(1500);
+      sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setTargetPosition(0);
+      robot.linearSlide.setTargetPosition(slideZero);
       robot.linearSlide.setPower(1);
       while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());

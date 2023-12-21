@@ -7,8 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
+
 @TeleOp
-@Disabled
+//@Disabled
 public class LinearSlideTest extends LinearOpMode {
    private DcMotor linearSlide;
    private Servo arm;
@@ -27,23 +30,23 @@ public class LinearSlideTest extends LinearOpMode {
         //FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
 
-        arm.setPosition(0);
+        arm.setPosition(armHoldPosition);
 
       waitForStart();
       while (opModeIsActive()) {
-         if (gamepad1.dpad_up&& linearSlide.getCurrentPosition() < 1900 ) {
-            linearSlide.setPower(0.5);
+         if (gamepad1.dpad_up&& linearSlide.getCurrentPosition() < 4100 ) {
+            linearSlide.setPower(1);
          } else if (gamepad1.dpad_down && linearSlide.getCurrentPosition() > 0) {
-            linearSlide.setPower(-0.5);
+            linearSlide.setPower(-1);
          } else {
             linearSlide.setPower(0.0);
          }
 
          if (gamepad1.a) {
-            arm.setPosition(0.5);
+            arm.setPosition(armCollectPosition);
          }
          else if (gamepad1.b) {
-            arm.setPosition(0);
+            arm.setPosition(armHoldPosition);
          }
          telemetry.addData("encoder",linearSlide.getCurrentPosition());
          telemetry.update();

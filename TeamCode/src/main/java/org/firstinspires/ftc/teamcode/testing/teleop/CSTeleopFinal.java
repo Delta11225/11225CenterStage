@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.utility.ControlConfig;
 
 import java.util.Locale;
 
-@TeleOp(name="CS TeleOp FINAL")
+@TeleOp
 //@Disabled
 public class CSTeleopFinal extends LinearOpMode {
 
