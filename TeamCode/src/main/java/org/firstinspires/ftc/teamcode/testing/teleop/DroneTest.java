@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
-@TeleOp
 @Disabled
+@TeleOp
+//@Disabled
 public class DroneTest extends LinearOpMode {
 
     private Servo Launcher;
@@ -28,13 +28,13 @@ public class DroneTest extends LinearOpMode {
         //FtcDashboard.getInstance().startCameraStream(webcam, 10);
         telemetry.update();
 //Init that the position is at 0.8 (hold position)
-        Launcher.setPosition(0.8);
+        Launcher.setPosition(0.5);
 
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.b) {
                 //hold
-                Launcher.setPosition(0.8);
+                Launcher.setPosition(0.5);
             }
             if (gamepad1.a) {
                 //launch

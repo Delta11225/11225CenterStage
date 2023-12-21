@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPositio
 import static org.firstinspires.ftc.teamcode.utility.Constants.armTrussHeight;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.droneHold;
+import static org.firstinspires.ftc.teamcode.utility.Constants.droneLaunch;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
 import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
@@ -49,6 +51,7 @@ public class CSTeleopFinal extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime lastSlideDown = new ElapsedTime();
+    private final ElapsedTime lastGrab = new ElapsedTime();
 
     double frontLeft;
     double rearLeft;
@@ -66,6 +69,10 @@ public class CSTeleopFinal extends LinearOpMode {
     double side;
 
     double currentAngle;
+
+    boolean clampIsClosed = false;
+    boolean slideDown = true;
+    boolean slowMode = false;
 
     @Override
     public void runOpMode() {
@@ -102,6 +109,8 @@ public class CSTeleopFinal extends LinearOpMode {
         robot.linearSlide.setDirection(DcMotor.Direction.FORWARD);
         robot.linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.linearSlide.setPower(0);
+        //set slideDown == true because start game with slide down
+        slideDown=true;
 
         //initialize scissor lift motors
         robot.leftScissor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -116,14 +125,16 @@ public class CSTeleopFinal extends LinearOpMode {
         robot.rightScissor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.rightScissor.setPower(0);
 
+
         // Initialize Servos
 
         //arm set to collect position
         robot.Arm.setPosition(Constants.armCollectPosition);
         //clamp set to open position
         robot.Clamp.setPosition(clampOpenPosition);
+        clampIsClosed=false;
         //drone launcher set to loaded position
-        robot.Launcher.setPosition(0.8);
+        robot.Launcher.setPosition(droneHold);
 
 
 
@@ -173,8 +184,8 @@ public class CSTeleopFinal extends LinearOpMode {
         telemetry.addData("CurrentAngle", currentAngle);
         telemetry.addData("Theta", theta);
 
-        forward = ControlConfig.right;
-        right = ControlConfig.backward;
+        forward = ControlConfig.forward;
+        right = ControlConfig.right;
         clockwise = ControlConfig.clockwise;
 
         temp = (forward * Math.cos(theta) - right * Math.sin(theta));
@@ -200,7 +211,7 @@ public class CSTeleopFinal extends LinearOpMode {
         telemetry.addData("front right: ", frontRight);
 
         // Handle speed control
-        //TODO update robot distance sensor to V2 in config file
+        //TODO update robot distance sensor to 2M in config file
         //TODO test values for slow mode distance threshold
 //        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25) {
 //            powerMultiplier = Constants.superSlowMultiplier;
@@ -208,14 +219,24 @@ public class CSTeleopFinal extends LinearOpMode {
        if (ControlConfig.fast){
             powerMultiplier = Constants.fastMultiplier;
             telemetry.addLine("fast");
+            slowMode=false;
         } else if (ControlConfig.slow) {
-            powerMultiplier = Constants.slowMultiplier;
-            telemetry.addLine("slow");
+           powerMultiplier = Constants.slowMultiplier;
+           telemetry.addLine("slow");
+           slowMode = true;
+       } else if (ControlConfig.slow && ControlConfig.fast){
+            powerMultiplier = Constants.superSlowMultiplier;
+            telemetry.addLine("super slow");
+            slowMode = true;
         } else {
             powerMultiplier = Constants.normalMultiplier;
             telemetry.addLine("normal");
+           slowMode=false;
         }
         telemetry.addData("robot distance",robot.RobotDistance.getDistance(DistanceUnit.CM));
+       telemetry.addData("pixel distance",robot.Distance.getDistance(DistanceUnit.CM));
+       telemetry.addData("claw Closed",clampIsClosed);
+       telemetry.addData("slide down",slideDown);
         telemetry.update();
 
 
@@ -233,13 +254,7 @@ public class CSTeleopFinal extends LinearOpMode {
 
 ///////////////////////////////////GAMEPAD 1////////////////////////////////////
 
-        //launch drone
-        //press both triggers at the same time to launch drone
-        //two button command to eliminate accidental trigger
-        if (gamepad1.right_trigger > 0.7 && gamepad1.left_trigger > 0.7) {
-            //launch
-            robot.Launcher.setPosition(1);
-        }
+
 
         //scissor "HOOK" automation
         //two button command to eliminate accidental trigger
@@ -286,44 +301,56 @@ public class CSTeleopFinal extends LinearOpMode {
         }
 
 ///////////////////////////////////GAMEPAD 2////////////////////////////////////
-        // Collector Clamp Manual
-        if (gamepad2.right_bumper) {
-            //clamp closed
-            robot.Clamp.setPosition(clampClosedPosition);
-            sleep(500);
-            if(robot.linearSlide.getCurrentPosition()<1000) {
-                robot.Arm.setPosition(armHoldPosition);
-            }
+
+        //if robot has just grabbed pixels the claw is raised above the ground for quick movement to backdrop
+        if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==true && slideDown==true && lastGrab.seconds() > 1) {
+            robot.Arm.setPosition(armHoldPosition);
         }
-        if (gamepad2.left_bumper) {
-            //clamp open
-            robot.Clamp.setPosition(clampOpenPosition);
-            sleep(500);
-            if(robot.linearSlide.getCurrentPosition()<200){
+
+        if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==false && slideDown==true){
+            //if robot is ready to grab, but is moving quickly, the claw is raised above the ground so it doesn't drag
+            if (slowMode==false){
+            robot.Arm.setPosition(armHoldPosition);
+            }
+            //if robot is ready to grab AND moving slowly the claw is in collect position so it can collect pixels
+            if (slowMode == true){
                 robot.Arm.setPosition(armCollectPosition);
             }
         }
 
+//////////////CLAMP MOVEMENTS////////////////////////////////
+        // Collector Clamp Manual
+        if (gamepad2.right_bumper) {
+            //clamp closed
+            lastGrab.reset();
+            robot.Clamp.setPosition(clampClosedPosition);
+            clampIsClosed=true;
+        }
+        if (gamepad2.left_bumper) {
+            //clamp open
+            lastGrab.reset();
+            robot.Clamp.setPosition(clampOpenPosition);
+            clampIsClosed=false;
+        }
+
         ///// Clamp Autograb
 
-        if (robot.Clamp.getPosition() == clampOpenPosition && robot.Distance.getDistance(DistanceUnit.CM) < 1) {
+        if (clampIsClosed==false && robot.Distance.getDistance(DistanceUnit.CM) < 1 && lastGrab.seconds()>2 && gamepad2.left_bumper==false) {
             telemetry.addData("Position", "Closed");
             telemetry.update();
+            lastGrab.reset();
             robot.Clamp.setPosition(clampClosedPosition);
-
             gamepad2.rumble(250);//Rumble work
-            sleep(1000);
-            if (robot.linearSlide.getCurrentPosition()<1000) {
-                robot.Arm.setPosition(armHoldPosition);
-            }
+            clampIsClosed=true;
         }
 
 //////////////////////Automated arm deployment///////////////////////////////////
 
         /////Automated deploy to LOW
-        if(gamepad2.x &&  robot.Clamp.getPosition() != clampOpenPosition) {
-            if (robot.linearSlide.getCurrentPosition()<2000){
-                robot.Arm.setPosition(armCollectPosition);
+        if(gamepad2.x &&  clampIsClosed==true) {
+            slideDown=false;
+            if (robot.linearSlide.getCurrentPosition()<1000){
+                robot.Arm.setPosition(armHoldPosition);
             }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -334,9 +361,10 @@ public class CSTeleopFinal extends LinearOpMode {
             robot.Arm.setPosition(armScoringPosition);
         }
         ////Automated deploy to HIGH
-        if(gamepad2.y &&  robot.Clamp.getPosition() != clampOpenPosition){
-            if (robot.linearSlide.getCurrentPosition()<2000){
-                robot.Arm.setPosition(armCollectPosition);
+        if(gamepad2.y &&  clampIsClosed==true){
+            slideDown=false;
+            if (robot.linearSlide.getCurrentPosition()<1000){
+                robot.Arm.setPosition(armHoldPosition);
             }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -347,7 +375,7 @@ public class CSTeleopFinal extends LinearOpMode {
             robot.Arm.setPosition(armScoringPosition);
         }
         ///Return to Arm collect position
-        if(gamepad2.a &&  robot.Clamp.getPosition() == clampOpenPosition){//add distance sensor to this later
+        if(gamepad2.a &&  clampIsClosed==false){//add distance sensor to this later
             lastSlideDown.reset();
             robot.Arm.setPosition(armHoldPosition);
             robot.Clamp.setPosition(clampClosedPosition);
@@ -366,10 +394,23 @@ public class CSTeleopFinal extends LinearOpMode {
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.Arm.setPosition(armCollectPosition);
             robot.Clamp.setPosition(clampOpenPosition);
+            slideDown=true;
         }
 
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
         telemetry.update();
+
+
+//////////////Launch Drone///////////////////////
+        //press both triggers at the same time to launch drone
+        //two button command to eliminate accidental trigger
+        if (gamepad2.right_trigger > 0.7 && gamepad2.left_trigger > 0.7) {
+            //launch
+            robot.Launcher.setPosition(droneLaunch);
+        }
+
+
+
 
         /*
         // Linear slide manual
