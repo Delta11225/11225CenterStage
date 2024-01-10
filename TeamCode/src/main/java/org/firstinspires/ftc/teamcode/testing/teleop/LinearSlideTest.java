@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPositio
 import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
 
 @TeleOp
-//@Disabled
+@Disabled
 public class LinearSlideTest extends LinearOpMode {
    private DcMotor linearSlide;
    private Servo arm;

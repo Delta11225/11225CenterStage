@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.testing.vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
+@Disabled
 public class ServoTestAC extends LinearOpMode {
    private Servo servoLeft;
    private Servo servoRight;

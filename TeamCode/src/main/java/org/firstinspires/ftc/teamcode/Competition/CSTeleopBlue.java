@@ -1,19 +1,4 @@
-package org.firstinspires.ftc.teamcode.testing.teleop;
-
-import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armTrussHeight;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.droneHold;
-import static org.firstinspires.ftc.teamcode.utility.Constants.droneLaunch;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightRight;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
+package org.firstinspires.ftc.teamcode.Competition;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -32,14 +17,29 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.utility.Constants;
-import org.firstinspires.ftc.teamcode.utility.HardwareCC;
 import org.firstinspires.ftc.teamcode.utility.ControlConfig;
+import org.firstinspires.ftc.teamcode.utility.HardwareCC;
 
 import java.util.Locale;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armTrussHeight;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.droneHold;
+import static org.firstinspires.ftc.teamcode.utility.Constants.droneLaunch;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightRight;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
+import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
+
 @TeleOp
 //@Disabled
-public class CSTeleopFinal extends LinearOpMode {
+public class CSTeleopBlue extends LinearOpMode {
 
     HardwareCC robot;
 
