@@ -32,7 +32,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 //@Disabled
-@Autonomous(preselectTeleOp = "CSTeleopFinal")
+@Autonomous(preselectTeleOp = "CSTeleopRed")
 public class AutoBackRed extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();

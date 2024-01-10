@@ -212,11 +212,15 @@ public class CSTeleopFinal extends LinearOpMode {
         telemetry.addData("front right: ", frontRight);
 
         // Handle speed control
-        //TODO update robot distance sensor to 2M in config file
+
         //TODO test values for slow mode distance threshold
-//        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25) {
-//            powerMultiplier = Constants.superSlowMultiplier;
-//            telemetry.addLine("slow");
+
+        // If the robot is 25cm away from the backdrop and is holding a pixel, robot enters superslow mode
+        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25 && clampIsClosed==true ) {
+            powerMultiplier = Constants.superSlowMultiplier;
+            telemetry.addData("robot distance", robot.RobotDistance.getDistance(DistanceUnit.CM) );
+            telemetry.addLine("superslow");
+        }
        if (ControlConfig.fast){
             powerMultiplier = Constants.fastMultiplier;
             telemetry.addLine("fast");
@@ -266,15 +270,6 @@ public class CSTeleopFinal extends LinearOpMode {
             robot.rightScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftScissor.setPower(1);
             robot.rightScissor.setPower(1);
-            while (robot.leftScissor.isBusy() || robot.rightScissor.isBusy()) {
-                telemetry.addData("left encoder", robot.leftScissor.getCurrentPosition());
-                telemetry.addData("right encoder", robot.rightScissor.getCurrentPosition());
-                telemetry.update();
-            }
-            robot.leftScissor.setPower(0);
-            robot.rightScissor.setPower(0);
-            robot.leftScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         //scissor "LIFT" automation

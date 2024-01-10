@@ -266,15 +266,6 @@ public class CSTeleopBlue extends LinearOpMode {
             robot.rightScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftScissor.setPower(1);
             robot.rightScissor.setPower(1);
-            while (robot.leftScissor.isBusy() || robot.rightScissor.isBusy()) {
-                telemetry.addData("left encoder", robot.leftScissor.getCurrentPosition());
-                telemetry.addData("right encoder", robot.rightScissor.getCurrentPosition());
-                telemetry.update();
-            }
-            robot.leftScissor.setPower(0);
-            robot.rightScissor.setPower(0);
-            robot.leftScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightScissor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         //scissor "LIFT" automation

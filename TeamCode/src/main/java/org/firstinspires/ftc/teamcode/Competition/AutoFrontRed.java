@@ -31,7 +31,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
 
 //@Disabled
-@Autonomous(preselectTeleOp = "CSTeleopFinalRed")
+@Autonomous(preselectTeleOp = "CSTeleopRed")
 public class AutoFrontRed extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
