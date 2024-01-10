@@ -1,35 +1,17 @@
-package org.firstinspires.ftc.teamcode;
-
-import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armTrussHeight;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployHigh;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutomatedDeployLow;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightLeft;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorHookHeightRight;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightLeft;
-import static org.firstinspires.ftc.teamcode.utility.Constants.scissorLiftHeightRight;
+package org.firstinspires.ftc.teamcode.Competition;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.utility.Constants;
 import org.firstinspires.ftc.teamcode.utility.HardwareCC;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -41,9 +23,16 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+
 //@Disabled
-@Autonomous(preselectTeleOp = "CSTeleopFinal")
-public class AutoBackBlue extends LinearOpMode {
+@Autonomous(preselectTeleOp = "CSTeleopFinalBlue")
+public class AutoFrontBlue extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
 
@@ -100,7 +89,7 @@ public class AutoBackBlue extends LinearOpMode {
       webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
       webcam.openCameraDevice();
-      webcam.setPipeline(new AutoBackBlue.PropDetectionPipeline());
+      webcam.setPipeline(new AutoFrontBlue.PropDetectionPipeline());
 
       //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -141,9 +130,6 @@ public class AutoBackBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
-              .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 39.5))
-              .lineTo(new Vector2d(3.5,39.5))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -158,9 +144,6 @@ public class AutoBackBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
-              .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 33.5))
-              .lineTo(new Vector2d(3.5,33.5))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -176,9 +159,6 @@ public class AutoBackBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
-              .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 27.5))
-              .lineTo(new Vector2d(3.5,27.5))
               .build();
 
 
@@ -215,14 +195,10 @@ public class AutoBackBlue extends LinearOpMode {
 
       if (left) {
          drive.followTrajectorySequence(trajLeft);
-         deployPixel();
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
-         deployPixel();
       } else {
          drive.followTrajectorySequence(trajMiddle);
-         deployPixel();
-
       }
    }
 
@@ -242,21 +218,9 @@ public class AutoBackBlue extends LinearOpMode {
       sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
-      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy()) {
-      }
-      sleep(1500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
       sleep(500);
-      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy()) {
-      }
-      sleep(1500);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);

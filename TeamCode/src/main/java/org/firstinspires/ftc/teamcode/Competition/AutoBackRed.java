@@ -1,4 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Competition;
+
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -23,16 +31,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
-
 //@Disabled
-@Autonomous(preselectTeleOp = "CSTeleopFinalRed")
-public class AutoFrontRed extends LinearOpMode {
+@Autonomous(preselectTeleOp = "CSTeleopFinal")
+public class AutoBackRed extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
 
@@ -88,7 +89,7 @@ public class AutoFrontRed extends LinearOpMode {
       webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
       webcam.openCameraDevice();
-      webcam.setPipeline(new AutoFrontRed.PropDetectionPipeline());
+      webcam.setPipeline(new AutoBackRed.PropDetectionPipeline());
 
       //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -130,7 +131,9 @@ public class AutoFrontRed extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
-              .back(15)
+              .lineTo(new Vector2d(-74, 57.5))
+              .lineTo(new Vector2d(-74, 24))
+              .lineTo(new Vector2d(-75.5, 24))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -146,7 +149,9 @@ public class AutoFrontRed extends LinearOpMode {
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .turn(Math.toRadians(180))
-              .back(15)
+              .lineTo(new Vector2d(-74, 57.5))
+              .lineTo(new Vector2d(-74, 30))
+              .lineTo(new Vector2d(-75.5, 30))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -163,7 +168,9 @@ public class AutoFrontRed extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
-              .back(15)
+              .lineTo(new Vector2d(-74, 57.5))
+              .lineTo(new Vector2d(-74, 36))
+              .lineTo(new Vector2d(-75.5, 36))
               .build();
 
 
@@ -200,10 +207,14 @@ public class AutoFrontRed extends LinearOpMode {
 
       if (left) {
          drive.followTrajectorySequence(trajLeft);
+         deployPixel();
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
+         deployPixel();
       } else {
          drive.followTrajectorySequence(trajMiddle);
+         deployPixel();
+
       }
    }
 
@@ -223,9 +234,21 @@ public class AutoFrontRed extends LinearOpMode {
       sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(1500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
       sleep(500);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(1);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(1500);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
