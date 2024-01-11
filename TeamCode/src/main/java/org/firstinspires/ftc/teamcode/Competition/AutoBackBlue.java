@@ -132,8 +132,8 @@ public class AutoBackBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 39.5))
-              .lineTo(new Vector2d(3.5,39.5))
+              .lineTo(new Vector2d(2, 40))
+              .lineTo(new Vector2d(3.5,40))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -149,8 +149,8 @@ public class AutoBackBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 33.5))
-              .lineTo(new Vector2d(3.5,33.5))
+              .lineTo(new Vector2d(2, 34))
+              .lineTo(new Vector2d(3.5,34))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark

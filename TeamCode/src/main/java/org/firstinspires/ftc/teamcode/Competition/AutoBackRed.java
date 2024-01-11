@@ -119,10 +119,11 @@ public class AutoBackRed extends LinearOpMode {
               .addDisplacementMarker(() -> {
                  robot.Clamp.setPosition(clampClosedPosition);
               })
+              .waitSeconds(0.5)
               .addDisplacementMarker(() -> {
                  robot.Arm.setPosition(armHoldPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45),
                       SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                       SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
@@ -140,11 +141,11 @@ public class AutoBackRed extends LinearOpMode {
               .addDisplacementMarker(() -> {
                  robot.Clamp.setPosition(clampClosedPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .addDisplacementMarker(() -> {
                  robot.Arm.setPosition(armHoldPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
@@ -158,11 +159,11 @@ public class AutoBackRed extends LinearOpMode {
               .addDisplacementMarker(() -> {
                  robot.Clamp.setPosition(clampClosedPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .addDisplacementMarker(() -> {
                  robot.Arm.setPosition(armHoldPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45))
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
@@ -233,31 +234,32 @@ public class AutoBackRed extends LinearOpMode {
       }
       sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
-      sleep(1000);
+      sleep(500);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setPower(1);
       while (robot.linearSlide.isBusy()) {
       }
-      sleep(1500);
+      sleep(500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
       sleep(500);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy()) {
+      while (robot.linearSlide.isBusy() && opModeIsActive()) {
       }
-      sleep(1500);
+      sleep(500);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
+      sleep(250);
       robot.Arm.setPosition(armHoldPosition);
       sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setTargetPosition(slideZero);
       robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
+      while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3) && opModeIsActive()) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
          telemetry.addLine("Stuck in loop");
          telemetry.update();
