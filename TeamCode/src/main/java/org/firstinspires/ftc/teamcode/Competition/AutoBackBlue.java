@@ -131,8 +131,8 @@ public class AutoBackBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
-              .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 40))
+              .lineTo(new Vector2d(-5, 57.5))
+              .lineTo(new Vector2d(-5, 40))
               .lineTo(new Vector2d(3.5,40))
               .build();
 
@@ -148,8 +148,8 @@ public class AutoBackBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
-              .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 34))
+              .lineTo(new Vector2d(-5, 57.5))
+              .lineTo(new Vector2d(-5, 34))
               .lineTo(new Vector2d(3.5,34))
               .build();
 
@@ -166,8 +166,8 @@ public class AutoBackBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
-              .lineTo(new Vector2d(2, 57.5))
-              .lineTo(new Vector2d(2, 27.5))
+              .lineTo(new Vector2d(-5, 57.5))
+              .lineTo(new Vector2d(-5, 27.5))
               .lineTo(new Vector2d(3.5,27.5))
               .build();
 

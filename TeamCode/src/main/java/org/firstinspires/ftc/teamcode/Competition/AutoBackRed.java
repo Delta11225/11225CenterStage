@@ -132,8 +132,8 @@ public class AutoBackRed extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
-              .lineTo(new Vector2d(-74, 57.5))
-              .lineTo(new Vector2d(-74, 24))
+              .lineTo(new Vector2d(-67, 57.5))
+              .lineTo(new Vector2d(-67, 24))
               .lineTo(new Vector2d(-75.5, 24))
               .build();
 
@@ -150,8 +150,8 @@ public class AutoBackRed extends LinearOpMode {
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .turn(Math.toRadians(180))
-              .lineTo(new Vector2d(-74, 57.5))
-              .lineTo(new Vector2d(-74, 30))
+              .lineTo(new Vector2d(-67, 57.5))
+              .lineTo(new Vector2d(-67, 30))
               .lineTo(new Vector2d(-75.5, 30))
               .build();
 
@@ -169,8 +169,8 @@ public class AutoBackRed extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
-              .lineTo(new Vector2d(-74, 57.5))
-              .lineTo(new Vector2d(-74, 36))
+              .lineTo(new Vector2d(-67, 57.5))
+              .lineTo(new Vector2d(-67, 36))
               .lineTo(new Vector2d(-75.5, 36))
               .build();
 

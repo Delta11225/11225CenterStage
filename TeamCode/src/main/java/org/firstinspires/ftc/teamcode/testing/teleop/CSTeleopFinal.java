@@ -340,56 +340,31 @@ public class CSTeleopFinal extends LinearOpMode {
             clampIsClosed=true;
         }
 
-//////////////////////Automated arm deployment///////////////////////////////////
+//////////////////////Linear Slide///////////////////////////////////
 
         /////Automated deploy to LOW
         if(gamepad2.x &&  clampIsClosed==true) {
             slideDown=false;
-            if (robot.linearSlide.getCurrentPosition()<1000){
-                robot.Arm.setPosition(armHoldPosition);
-            }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()){
 
-            }
-            robot.Arm.setPosition(armScoringPosition);
         }
         ////Automated deploy to HIGH
         if(gamepad2.y &&  clampIsClosed==true){
             slideDown=false;
-            if (robot.linearSlide.getCurrentPosition()<1000){
-                robot.Arm.setPosition(armHoldPosition);
-            }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()){
-                //waits for arm to get to position
-            }
-            robot.Arm.setPosition(armScoringPosition);
+
         }
         ///Return to Arm collect position
         if(gamepad2.a &&  clampIsClosed==false){//add distance sensor to this later
             lastSlideDown.reset();
-            robot.Arm.setPosition(armHoldPosition);
             robot.Clamp.setPosition(clampClosedPosition);
-            sleep(750);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setTargetPosition(0);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()&&(lastSlideDown.seconds() < 3)){
-                telemetry.addData("LinearSlideEncoder",robot.linearSlide.getCurrentPosition());
-                telemetry.addLine("Stuck in loop");
-                telemetry.update();
-            }
-            telemetry.addData("LinearSlideEncoder",robot.linearSlide.getCurrentPosition());
-            telemetry.update();
-            robot.linearSlide.setPower(0);
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.Arm.setPosition(armCollectPosition);
-            robot.Clamp.setPosition(clampOpenPosition);
             slideDown=true;
         }
 
