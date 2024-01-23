@@ -91,7 +91,7 @@ public class CSTeleopFinal extends LinearOpMode {
         imu.initialize(parameters);
 
         composeTelemetry();
-
+        resetRuntime();
         robot = new HardwareCC(hardwareMap);
 
         //initialize drive motors
@@ -143,8 +143,10 @@ public class CSTeleopFinal extends LinearOpMode {
         // End init phase
         waitForStart();
 
+
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         currentAngle = 0;
+        runtime.reset();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -217,13 +219,14 @@ public class CSTeleopFinal extends LinearOpMode {
 
         //TODO test values for slow mode distance threshold
 
-        // If the robot is 25cm away from the backdrop and is holding a pixel, robot enters superslow mode
-        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25 && clampIsClosed==true ) {
+        // If the robot is 25cm away from the backdrop robot enters superslow mode
+        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25 && clampIsClosed==true) {
             powerMultiplier = Constants.superSlowMultiplier;
             telemetry.addData("robot distance", robot.RobotDistance.getDistance(DistanceUnit.CM) );
-            telemetry.addLine("superslow");
-        }
-       if (ControlConfig.fast){
+            telemetry.addLine("distance slow");
+            slowMode = true;
+
+        } else if (ControlConfig.fast){
             powerMultiplier = Constants.fastMultiplier;
             telemetry.addLine("fast");
             slowMode=false;
@@ -302,6 +305,10 @@ public class CSTeleopFinal extends LinearOpMode {
 
 ///////////////////////////////////GAMEPAD 2////////////////////////////////////
 
+        // if 45 seconds left, rumble to warn end game is coming
+        if(runtime.seconds()>75 && runtime.seconds()<77){
+            gamepad2.rumble(500);
+        }
         //if robot has just grabbed pixels the claw is raised above the ground for quick movement to backdrop
         if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==true && slideDown==true && lastGrab.seconds() > 1) {
             robot.Arm.setPosition(armHoldPosition);
@@ -391,7 +398,7 @@ public class CSTeleopFinal extends LinearOpMode {
         }
 
         //set linear slide motor to idle if physically reached "ground" hard stop but not = 0 (may be > or < 0)
-        if(slideDown == true && (lastSlideDown.seconds() > 3|| robot.linearSlide.getCurrentPosition()<linearSlideZeroOffset)){
+        if(slideDown == true && (lastSlideDown.seconds() > 3 || robot.linearSlide.getCurrentPosition()<linearSlideZeroOffset)){
             //turn off linear slide motor so it doesn't overheat trying to pass hard stop
             robot.linearSlide.setPower(0);
             //reset current position to the new "ground/zero" position
