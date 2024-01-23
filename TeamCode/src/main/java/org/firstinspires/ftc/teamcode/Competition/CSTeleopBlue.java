@@ -61,7 +61,7 @@ public class CSTeleopBlue extends LinearOpMode {
     double forward;
     double right;
     double clockwise;
-
+    int linearSlideZeroOffset = 0;
     double powerMultiplier = 1;
     double deadZone = Math.abs(0.2);
 
@@ -145,6 +145,7 @@ public class CSTeleopBlue extends LinearOpMode {
 
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         currentAngle = 0;
+        runtime.reset();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -214,32 +215,39 @@ public class CSTeleopBlue extends LinearOpMode {
         telemetry.addData("front right: ", frontRight);
 
         // Handle speed control
-        //TODO update robot distance sensor to 2M in config file
-        //TODO test values for slow mode distance threshold
-//        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25) {
-//            powerMultiplier = Constants.superSlowMultiplier;
-//            telemetry.addLine("slow");
-       if (ControlConfig.fast){
+
+
+
+        // If the robot is 25cm away from the backdrop robot enters superslow mode
+        if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25 && clampIsClosed==true) {
+            powerMultiplier = Constants.superSlowMultiplier;
+            telemetry.addData("robot distance", robot.RobotDistance.getDistance(DistanceUnit.CM) );
+            telemetry.addLine("distance slow");
+            slowMode = true;
+
+        } else if (ControlConfig.fast){
             powerMultiplier = Constants.fastMultiplier;
             telemetry.addLine("fast");
             slowMode=false;
         } else if (ControlConfig.slow) {
-           powerMultiplier = Constants.slowMultiplier;
-           telemetry.addLine("slow");
-           slowMode = true;
-       } else if (ControlConfig.slow && ControlConfig.fast){
+            powerMultiplier = Constants.slowMultiplier;
+            telemetry.addLine("slow");
+            slowMode = true;
+        } else if (ControlConfig.slow && ControlConfig.fast){
             powerMultiplier = Constants.superSlowMultiplier;
             telemetry.addLine("super slow");
             slowMode = true;
         } else {
             powerMultiplier = Constants.normalMultiplier;
             telemetry.addLine("normal");
-           slowMode=false;
+            slowMode=false;
         }
         telemetry.addData("robot distance",robot.RobotDistance.getDistance(DistanceUnit.CM));
-       telemetry.addData("pixel distance",robot.Distance.getDistance(DistanceUnit.CM));
-       telemetry.addData("claw Closed",clampIsClosed);
-       telemetry.addData("slide down",slideDown);
+        telemetry.addData("pixel distance",robot.Distance.getDistance(DistanceUnit.CM));
+        telemetry.addData("claw Closed",clampIsClosed);
+        telemetry.addData("slide down",slideDown);
+        telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
+        telemetry.addData("slide power",robot.linearSlide.getPower());
         telemetry.update();
 
 
@@ -296,6 +304,10 @@ public class CSTeleopBlue extends LinearOpMode {
 
 ///////////////////////////////////GAMEPAD 2////////////////////////////////////
 
+        // if 45 seconds left, rumble to warn end game is coming
+        if(runtime.seconds()>75 && runtime.seconds()<77){
+            gamepad2.rumble(500);
+        }
         //if robot has just grabbed pixels the claw is raised above the ground for quick movement to backdrop
         if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==true && slideDown==true && lastGrab.seconds() > 1) {
             robot.Arm.setPosition(armHoldPosition);
@@ -359,33 +371,43 @@ public class CSTeleopBlue extends LinearOpMode {
         /////Automated deploy to LOW
         if(gamepad2.x && clampIsClosed==true) {
             slideDown=false;
-            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
+            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow + linearSlideZeroOffset);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
 
         }
+
         ////Automated deploy to HIGH
         if(gamepad2.y && clampIsClosed==true){
             slideDown=false;
-            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
+            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh + linearSlideZeroOffset);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
 
         }
+
         ///Return to collect position (ground)
-        //if(gamepad2.a && clampIsClosed==false && robot.Arm.getPosition() == armHoldPosition){
-        if(gamepad2.a && clampIsClosed==true && armIsScoring ==false){//add distance sensor to this later
+        if(gamepad2.a && clampIsClosed==true && armIsScoring == false){//add distance sensor to this later
+            slideDown=true;
             lastSlideDown.reset();
             robot.Clamp.setPosition(clampClosedPosition);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.linearSlide.setTargetPosition(0);
+            robot.linearSlide.setTargetPosition(linearSlideZeroOffset);
             robot.linearSlide.setPower(1);
-            slideDown=true;
+        }
+
+        //set linear slide motor to idle if physically reached "ground" hard stop but not = 0 (may be > or < 0)
+        if(slideDown == true && (lastSlideDown.seconds() > 3 || robot.linearSlide.getCurrentPosition()<linearSlideZeroOffset)){
+            //turn off linear slide motor so it doesn't overheat trying to pass hard stop
+            robot.linearSlide.setPower(0);
+            //reset current position to the new "ground/zero" position
+            linearSlideZeroOffset = robot.linearSlide.getCurrentPosition();
+
         }
 
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
+        telemetry.addData("slide power",robot.linearSlide.getPower());
         telemetry.update();
-
 
 //////////////Launch Drone///////////////////////
         //press both triggers at the same time to launch drone

@@ -217,7 +217,7 @@ public class CSTeleopFinal extends LinearOpMode {
 
         // Handle speed control
 
-        //TODO test values for slow mode distance threshold
+
 
         // If the robot is 25cm away from the backdrop robot enters superslow mode
         if (robot.RobotDistance.getDistance(DistanceUnit.CM) < 25 && clampIsClosed==true) {
