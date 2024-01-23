@@ -29,6 +29,8 @@ public abstract class Constants {
     public final static int linearSlideAutonomousDrop = 1900;
     //for teleop
     public final static int linearSlideAutomatedDeployLow = 3000;//2771 old value
+
+    public final static int linearSlideLowSafety = 2500;
     public final static int linearSlideAutomatedDeployHigh = 4109;
 
 

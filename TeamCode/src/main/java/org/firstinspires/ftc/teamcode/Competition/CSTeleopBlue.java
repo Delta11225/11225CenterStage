@@ -74,6 +74,8 @@ public class CSTeleopBlue extends LinearOpMode {
     boolean slideDown = true;
     boolean slowMode = false;
 
+    boolean armIsScoring = false;
+
     @Override
     public void runOpMode() {
 
@@ -250,7 +252,7 @@ public class CSTeleopBlue extends LinearOpMode {
     }
 
     public void peripheralMove(){
-        
+
         //code for peripheral systems
 
 ///////////////////////////////////GAMEPAD 1////////////////////////////////////
@@ -302,7 +304,7 @@ public class CSTeleopBlue extends LinearOpMode {
         if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==false && slideDown==true){
             //if robot is ready to grab, but is moving quickly, the claw is raised above the ground so it doesn't drag
             if (slowMode==false){
-            robot.Arm.setPosition(armHoldPosition);
+                robot.Arm.setPosition(armHoldPosition);
             }
             //if robot is ready to grab AND moving slowly the claw is in collect position so it can collect pixels
             if (slowMode == true){
@@ -318,7 +320,7 @@ public class CSTeleopBlue extends LinearOpMode {
             robot.Clamp.setPosition(clampClosedPosition);
             clampIsClosed=true;
         }
-        if (gamepad2.left_bumper) {
+        if (gamepad2.left_bumper && (armIsScoring == true || robot.linearSlide.getCurrentPosition() < Constants.linearSlideLowSafety)) {
             //clamp open
             lastGrab.reset();
             robot.Clamp.setPosition(clampOpenPosition);
@@ -336,56 +338,48 @@ public class CSTeleopBlue extends LinearOpMode {
             clampIsClosed=true;
         }
 
-//////////////////////Automated arm deployment///////////////////////////////////
+//////////////////////Arm Movements//////////////////////////////////
+
+        if (gamepad2.dpad_left && robot.linearSlide.getCurrentPosition() > Constants.linearSlideLowSafety) {
+            if( (robot.Arm.getPosition() == armScoringPosition && clampIsClosed == false)){
+                robot.Clamp.setPosition(clampClosedPosition);
+                clampIsClosed = true;
+            }
+            robot.Arm.setPosition(armHoldPosition);
+            armIsScoring = false;
+        }
+        if (gamepad2.b && robot.linearSlide.getCurrentPosition() > Constants.linearSlideLowSafety && clampIsClosed == true) {
+            robot.Arm.setPosition(armScoringPosition);
+            armIsScoring = true;
+        }
+
+
+//////////////////////Linear Slide///////////////////////////////////
 
         /////Automated deploy to LOW
-        if(gamepad2.x &&  clampIsClosed==true) {
+        if(gamepad2.x && clampIsClosed==true) {
             slideDown=false;
-            if (robot.linearSlide.getCurrentPosition()<1000){
-                robot.Arm.setPosition(armHoldPosition);
-            }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()){
 
-            }
-            robot.Arm.setPosition(armScoringPosition);
         }
         ////Automated deploy to HIGH
-        if(gamepad2.y &&  clampIsClosed==true){
+        if(gamepad2.y && clampIsClosed==true){
             slideDown=false;
-            if (robot.linearSlide.getCurrentPosition()<1000){
-                robot.Arm.setPosition(armHoldPosition);
-            }
             robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()){
-                //waits for arm to get to position
-            }
-            robot.Arm.setPosition(armScoringPosition);
+
         }
-        ///Return to Arm collect position
-        if(gamepad2.a &&  clampIsClosed==false){//add distance sensor to this later
+        ///Return to collect position (ground)
+        //if(gamepad2.a && clampIsClosed==false && robot.Arm.getPosition() == armHoldPosition){
+        if(gamepad2.a && clampIsClosed==true && armIsScoring ==false){//add distance sensor to this later
             lastSlideDown.reset();
-            robot.Arm.setPosition(armHoldPosition);
             robot.Clamp.setPosition(clampClosedPosition);
-            sleep(750);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setTargetPosition(0);
             robot.linearSlide.setPower(1);
-            while(robot.linearSlide.isBusy()&&(lastSlideDown.seconds() < 3)){
-                telemetry.addData("LinearSlideEncoder",robot.linearSlide.getCurrentPosition());
-                telemetry.addLine("Stuck in loop");
-                telemetry.update();
-            }
-            telemetry.addData("LinearSlideEncoder",robot.linearSlide.getCurrentPosition());
-            telemetry.update();
-            robot.linearSlide.setPower(0);
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.Arm.setPosition(armCollectPosition);
-            robot.Clamp.setPosition(clampOpenPosition);
             slideDown=true;
         }
 
@@ -402,32 +396,6 @@ public class CSTeleopBlue extends LinearOpMode {
         }
 
 
-
-
-        /*
-        // Linear slide manual
-        if (gamepad2.dpad_up && robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.linearSlide.setPower(linearSlideUpPower);
-        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > minLinearSlidePosition) {
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.linearSlide.setPower(linearSlideDownPower);
-        } else {
-            robot.linearSlide.setPower(0.0);
-        }
-  */
-
-  /*
-                // Arm MANUAL movement
-        if (gamepad2.dpad_right) {
-            //collect position
-            robot.Arm.setPosition(armCollectPosition);
-        } else if (gamepad2.dpad_left ) {
-            //&& robot.linearSlide.getCurrentPosition() > 2000
-            //deploy or scoring position
-            robot.Arm.setPosition(armScoringPosition);
-        }
-*/
     }
 
 

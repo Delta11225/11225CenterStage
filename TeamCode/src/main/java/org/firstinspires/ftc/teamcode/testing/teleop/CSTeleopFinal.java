@@ -62,6 +62,7 @@ public class CSTeleopFinal extends LinearOpMode {
     double right;
     double clockwise;
 
+    int linearSlideZeroOffset = 0;
     double powerMultiplier = 1;
     double deadZone = Math.abs(0.2);
 
@@ -73,6 +74,7 @@ public class CSTeleopFinal extends LinearOpMode {
     boolean clampIsClosed = false;
     boolean slideDown = true;
     boolean slowMode = false;
+    boolean armIsScoring = false;
 
     @Override
     public void runOpMode() {
@@ -242,6 +244,8 @@ public class CSTeleopFinal extends LinearOpMode {
        telemetry.addData("pixel distance",robot.Distance.getDistance(DistanceUnit.CM));
        telemetry.addData("claw Closed",clampIsClosed);
        telemetry.addData("slide down",slideDown);
+        telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
+        telemetry.addData("slide power",robot.linearSlide.getPower());
         telemetry.update();
 
 
@@ -322,7 +326,7 @@ public class CSTeleopFinal extends LinearOpMode {
             robot.Clamp.setPosition(clampClosedPosition);
             clampIsClosed=true;
         }
-        if (gamepad2.left_bumper) {
+        if (gamepad2.left_bumper && (armIsScoring == true || robot.linearSlide.getCurrentPosition() < Constants.linearSlideLowSafety)) {
             //clamp open
             lastGrab.reset();
             robot.Clamp.setPosition(clampOpenPosition);
@@ -340,35 +344,63 @@ public class CSTeleopFinal extends LinearOpMode {
             clampIsClosed=true;
         }
 
+//////////////////////Arm Movements//////////////////////////////////
+
+        if (gamepad2.dpad_left && robot.linearSlide.getCurrentPosition() > Constants.linearSlideLowSafety) {
+            if( (robot.Arm.getPosition() == armScoringPosition && clampIsClosed == false)){
+                robot.Clamp.setPosition(clampClosedPosition);
+                clampIsClosed = true;
+            }
+            robot.Arm.setPosition(armHoldPosition);
+            armIsScoring = false;
+        }
+        if (gamepad2.b && robot.linearSlide.getCurrentPosition() > Constants.linearSlideLowSafety && clampIsClosed == true) {
+            robot.Arm.setPosition(armScoringPosition);
+            armIsScoring = true;
+        }
+
+
 //////////////////////Linear Slide///////////////////////////////////
 
         /////Automated deploy to LOW
-        if(gamepad2.x &&  clampIsClosed==true) {
+        if(gamepad2.x && clampIsClosed==true) {
             slideDown=false;
-            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow);
+            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployLow + linearSlideZeroOffset);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
 
         }
+
         ////Automated deploy to HIGH
-        if(gamepad2.y &&  clampIsClosed==true){
+        if(gamepad2.y && clampIsClosed==true){
             slideDown=false;
-            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh);
+            robot.linearSlide.setTargetPosition(linearSlideAutomatedDeployHigh + linearSlideZeroOffset);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.linearSlide.setPower(1);
 
         }
-        ///Return to Arm collect position
-        if(gamepad2.a &&  clampIsClosed==false){//add distance sensor to this later
+
+        ///Return to collect position (ground)
+        if(gamepad2.a && clampIsClosed==true && armIsScoring == false){//add distance sensor to this later
+            slideDown=true;
             lastSlideDown.reset();
             robot.Clamp.setPosition(clampClosedPosition);
             robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.linearSlide.setTargetPosition(0);
+            robot.linearSlide.setTargetPosition(linearSlideZeroOffset);
             robot.linearSlide.setPower(1);
-            slideDown=true;
+        }
+
+        //set linear slide motor to idle if physically reached "ground" hard stop but not = 0 (may be > or < 0)
+        if(slideDown == true && (lastSlideDown.seconds() > 3|| robot.linearSlide.getCurrentPosition()<linearSlideZeroOffset)){
+            //turn off linear slide motor so it doesn't overheat trying to pass hard stop
+            robot.linearSlide.setPower(0);
+            //reset current position to the new "ground/zero" position
+            linearSlideZeroOffset = robot.linearSlide.getCurrentPosition();
+
         }
 
         telemetry.addData("encoder",robot.linearSlide.getCurrentPosition());
+        telemetry.addData("slide power",robot.linearSlide.getPower());
         telemetry.update();
 
 
@@ -382,31 +414,6 @@ public class CSTeleopFinal extends LinearOpMode {
 
 
 
-
-        /*
-        // Linear slide manual
-        if (gamepad2.dpad_up && robot.linearSlide.getCurrentPosition() < maxLinearSlidePostion ) {
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.linearSlide.setPower(linearSlideUpPower);
-        } else if (gamepad2.dpad_down && robot.linearSlide.getCurrentPosition() > minLinearSlidePosition) {
-            robot.linearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.linearSlide.setPower(linearSlideDownPower);
-        } else {
-            robot.linearSlide.setPower(0.0);
-        }
-  */
-
-  /*
-                // Arm MANUAL movement
-        if (gamepad2.dpad_right) {
-            //collect position
-            robot.Arm.setPosition(armCollectPosition);
-        } else if (gamepad2.dpad_left ) {
-            //&& robot.linearSlide.getCurrentPosition() > 2000
-            //deploy or scoring position
-            robot.Arm.setPosition(armScoringPosition);
-        }
-*/
     }
 
 
