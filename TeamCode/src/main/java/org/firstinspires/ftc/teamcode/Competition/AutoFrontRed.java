@@ -126,7 +126,7 @@ public class AutoFrontRed extends LinearOpMode {
                       SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                       SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
               )
-              .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-28, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
@@ -159,7 +159,7 @@ public class AutoFrontRed extends LinearOpMode {
               })
               .waitSeconds(1)
               .lineTo(new Vector2d(-36, 45))
-              .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
+              .lineToLinearHeading(new Pose2d(-41.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))

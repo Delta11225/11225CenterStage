@@ -128,11 +128,11 @@ public class AutoBackBlue extends LinearOpMode {
                   SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                   SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
               )
-              .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-28.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-5, 45))
               .lineTo(new Vector2d(-5, 40))
-              .lineTo(new Vector2d(4.5,40))
+              .lineTo(new Vector2d(5,40))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -149,7 +149,7 @@ public class AutoBackBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-5, 45))
               .lineTo(new Vector2d(-5, 34))
-              .lineTo(new Vector2d(4.5,34))
+              .lineTo(new Vector2d(5,34))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -166,7 +166,7 @@ public class AutoBackBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-5, 45))
               .lineTo(new Vector2d(-5, 27.5))
-              .lineTo(new Vector2d(4.5,27.5))
+              .lineTo(new Vector2d(5,27.5))
               .build();
 
 
