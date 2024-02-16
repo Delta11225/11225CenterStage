@@ -1,13 +1,5 @@
 package org.firstinspires.ftc.teamcode.Competition;
 
-import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
-import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -31,9 +23,17 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.armCollectPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armHoldPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
+
 //@Disabled
-@Autonomous(preselectTeleOp = "CSTeleopBlue")
-public class AutoBackBlue extends LinearOpMode {
+@Autonomous(preselectTeleOp = "CSTeleopRed")
+public class AutoBackRedParkL extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
 
@@ -51,15 +51,15 @@ public class AutoBackBlue extends LinearOpMode {
    private static int valMidR = -1;
    private static int valRightR = -1;
 
-   private static float rectHeight = 1f/8f;
-   private static float rectWidth =  1f/8f;
+   private static float rectHeight = 1f / 8f;
+   private static float rectWidth = 1f / 8f;
 
-   private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
-   private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
+   private static float offsetX = 0f / 8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
+   private static float offsetY = 0f / 8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
 
-   private static float[] midPos = {2f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-   private static float[] rightPos = {5.7f/8f+offsetX, 4f/8f+offsetY};
+   private static float[] midPos = {2f / 8f + offsetX, 4f / 8f + offsetY};//0 = col, 1 = row
+   private static float[] rightPos = {5.7f / 8f + offsetX, 4f / 8f + offsetY};
    //moves all rectangles right or left by amount. units are in ratio to monitor
 
    public boolean left = false;
@@ -83,14 +83,13 @@ public class AutoBackBlue extends LinearOpMode {
       slideZero = robot.linearSlide.getCurrentPosition();
 
 
-
       SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
       int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
       webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
       webcam.openCameraDevice();
-      webcam.setPipeline(new AutoBackBlue.PropDetectionPipeline());
+      webcam.setPipeline(new AutoBackRedParkL.PropDetectionPipeline());
 
       //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -116,59 +115,94 @@ public class AutoBackBlue extends LinearOpMode {
       Pose2d startPose = new Pose2d(-36, 61.5, Math.toRadians(180));
       drive.setPoseEstimate(startPose);
 
-      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//center spike mark
-              .addDisplacementMarker(()->{
+      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//left spike mark
+              .addDisplacementMarker(() -> {
                  robot.Clamp.setPosition(clampClosedPosition);
               })
-              .addDisplacementMarker(()->{
+              .waitSeconds(0.5)
+              .addDisplacementMarker(() -> {
                  robot.Arm.setPosition(armHoldPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45),
-                  SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                  SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                      SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                      SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
               )
-              .lineToLinearHeading(new Pose2d(-28.5, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-5, 45))
-              .lineTo(new Vector2d(-5, 40))
-              .lineTo(new Vector2d(6,40))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
+              .lineTo(new Vector2d(-67, 45))
+              .turn(Math.toRadians(180))
+              .lineTo(new Vector2d(-67, 25))
+              .lineTo(new Vector2d(-75.5, 25))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
-              .addDisplacementMarker(()->{
+              .addDisplacementMarker(() -> {
                  robot.Clamp.setPosition(clampClosedPosition);
               })
-              .waitSeconds(1)
-              .addDisplacementMarker(()->{
+              .waitSeconds(0.5)
+              .addDisplacementMarker(() -> {
                  robot.Arm.setPosition(armHoldPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-36, 29))
-              .lineTo(new Vector2d(-36, 45))
-              .lineTo(new Vector2d(-5, 45))
-              .lineTo(new Vector2d(-5, 34))
-              .lineTo(new Vector2d(6,34))
+              .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
+              .lineTo(new Vector2d(-67, 45))
+              .turn(Math.toRadians(180))
+              .lineTo(new Vector2d(-67, 31))
+              .lineTo(new Vector2d(-76.5, 31))
               .build();
 
-      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
-              .addDisplacementMarker(()->{
+      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//right spike mark
+              .addDisplacementMarker(() -> {
                  robot.Clamp.setPosition(clampClosedPosition);
               })
-              .waitSeconds(1)
-              .addDisplacementMarker(()->{
+              .waitSeconds(0.5)
+              .addDisplacementMarker(() -> {
                  robot.Arm.setPosition(armHoldPosition);
               })
-              .waitSeconds(1)
+              .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45))
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-5, 45))
-              .lineTo(new Vector2d(-5, 27.5))
-              .lineTo(new Vector2d(6,27.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
+              .lineTo(new Vector2d(-67, 45))
+              .turn(Math.toRadians(180))
+              .lineTo(new Vector2d(-67, 37))
+              .lineTo(new Vector2d(-76.5, 37))
               .build();
 
+      ////////////PARKING TRAJECTORIES////////////////////////////////////
+      TrajectorySequence trajLeftPark = drive.trajectorySequenceBuilder(trajLeft.end())//left spike mark
+              .lineTo(new Vector2d(-73.5,25))
+              .lineTo(new Vector2d(-73.5,6))
+              .lineTo(new Vector2d(-84.5,6))
+              .build();
+      TrajectorySequence trajRightPark = drive.trajectorySequenceBuilder(trajRight.end())//right spike mark
+              .lineTo(new Vector2d(-73.5,37))
+              .lineTo(new Vector2d(-73.5,6))
+              .lineTo(new Vector2d(-84.5,6))
+              .build();
+      TrajectorySequence trajMiddlePark = drive.trajectorySequenceBuilder(trajMiddle.end())//center spike mark
+              .lineTo(new Vector2d(-73.5,31))
+              .lineTo(new Vector2d(-73.5,6))
+              .lineTo(new Vector2d(-84.5,6))
+              .build();
 
       waitForStart();
 
@@ -204,30 +238,19 @@ public class AutoBackBlue extends LinearOpMode {
       if (left) {
          drive.followTrajectorySequence(trajLeft);
          deployPixel();
+         drive.followTrajectorySequence(trajLeftPark);
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
          deployPixel();
+         drive.followTrajectorySequence(trajRightPark);
       } else {
          drive.followTrajectorySequence(trajMiddle);
          deployPixel();
-
+         drive.followTrajectorySequence(trajMiddlePark);
       }
    }
 
    public void deployPixel() {
-
-      robot.Clamp.setPosition(clampClosedPosition);
-      sleep(500);
-      robot.Arm.setPosition(armHoldPosition);
-      sleep(1000);
-      /////Automated deploy to LOW
-
-      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(0.8);
-      while (robot.linearSlide.isBusy()) {
-      }
-      sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
@@ -235,16 +258,16 @@ public class AutoBackBlue extends LinearOpMode {
       robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy()) {
       }
-      sleep(1500);
+      sleep(500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
-      sleep(500);
+      sleep(300);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy()) {
       }
-      sleep(1500);
+      sleep(200);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
@@ -267,8 +290,7 @@ public class AutoBackBlue extends LinearOpMode {
    }
 
 
-   public class PropDetectionPipeline extends OpenCvPipeline
-   {
+   public class PropDetectionPipeline extends OpenCvPipeline {
       Mat yCbCr = new Mat();
       //    Mat yMat = new Mat();
       Mat CbMat = new Mat();
@@ -279,8 +301,7 @@ public class AutoBackBlue extends LinearOpMode {
       Mat all = new Mat();
 
       @Override
-      public Mat processFrame(Mat input)
-      {
+      public Mat processFrame(Mat input) {
          Imgproc.cvtColor(input, yCbCr, Imgproc.COLOR_RGB2YCrCb);//converts rgb to ycrcb
          //  Core.extractChannel(yCbCr, yMat, 0);//extracts cb channel as black and white RGB
          Core.extractChannel(yCbCr, CrMat, 1);//extracts cb channel as black and white RGB
@@ -293,45 +314,45 @@ public class AutoBackBlue extends LinearOpMode {
          CrMat.copyTo(all);//copies mat object
 
          //get values from frame
-         double[] pixMidR = thresholdMatCr.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
-         valMidR = (int)pixMidR[0];
+         double[] pixMidR = thresholdMatCr.get((int) (input.rows() * midPos[1]), (int) (input.cols() * midPos[0]));//gets value at circle
+         valMidR = (int) pixMidR[0];
 
-         double[] pixRightR = thresholdMatCr.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-         valRightR = (int)pixRightR[0];
+         double[] pixRightR = thresholdMatCr.get((int) (input.rows() * rightPos[1]), (int) (input.cols() * rightPos[0]));//gets value at circle
+         valRightR = (int) pixRightR[0];
 
          //get values from frame
-         double[] pixMidB = thresholdMatCb.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
-         valMidB = (int)pixMidB[0];
+         double[] pixMidB = thresholdMatCb.get((int) (input.rows() * midPos[1]), (int) (input.cols() * midPos[0]));//gets value at circle
+         valMidB = (int) pixMidB[0];
 
-         double[] pixRightB = thresholdMatCb.get((int)(input.rows()* rightPos[1]), (int)(input.cols()* rightPos[0]));//gets value at circle
-         valRightB = (int)pixRightB[0];
+         double[] pixRightB = thresholdMatCb.get((int) (input.rows() * rightPos[1]), (int) (input.cols() * rightPos[0]));//gets value at circle
+         valRightB = (int) pixRightB[0];
 
          //create three points
-         Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
-         Point pointRight = new Point((int)(input.cols()* rightPos[0]), (int)(input.rows()* rightPos[1]));
+         Point pointMid = new Point((int) (input.cols() * midPos[0]), (int) (input.rows() * midPos[1]));
+         Point pointRight = new Point((int) (input.cols() * rightPos[0]), (int) (input.rows() * rightPos[1]));
 
          //draw circles on those points
-         Imgproc.circle(all, pointMid,5, new Scalar( 255, 0, 0 ),1 );//draws circle
-         Imgproc.circle(all, pointRight,5, new Scalar( 255, 0, 0 ),1 );//draws circle
+         Imgproc.circle(all, pointMid, 5, new Scalar(255, 0, 0), 1);//draws circle
+         Imgproc.circle(all, pointRight, 5, new Scalar(255, 0, 0), 1);//draws circle
 
          //draw 3 rectangles
          Imgproc.rectangle(//3-5
                  all,
                  new Point(
-                         input.cols()*(midPos[0]-rectWidth/2),
-                         input.rows()*(midPos[1]-rectHeight/2)),
+                         input.cols() * (midPos[0] - rectWidth / 2),
+                         input.rows() * (midPos[1] - rectHeight / 2)),
                  new Point(
-                         input.cols()*(midPos[0]+rectWidth/2),
-                         input.rows()*(midPos[1]+rectHeight/2)),
+                         input.cols() * (midPos[0] + rectWidth / 2),
+                         input.rows() * (midPos[1] + rectHeight / 2)),
                  new Scalar(0, 255, 0), 3);
          Imgproc.rectangle(//5-7
                  all,
                  new Point(
-                         input.cols()*(rightPos[0]-rectWidth/2),
-                         input.rows()*(rightPos[1]-rectHeight/2)),
+                         input.cols() * (rightPos[0] - rectWidth / 2),
+                         input.rows() * (rightPos[1] - rectHeight / 2)),
                  new Point(
-                         input.cols()*(rightPos[0]+rectWidth/2),
-                         input.rows()*(rightPos[1]+rectHeight/2)),
+                         input.cols() * (rightPos[0] + rectWidth / 2),
+                         input.rows() * (rightPos[1] + rectHeight / 2)),
                  new Scalar(0, 255, 0), 3);
 
 
@@ -341,4 +362,3 @@ public class AutoBackBlue extends LinearOpMode {
       }
    }
 }
-

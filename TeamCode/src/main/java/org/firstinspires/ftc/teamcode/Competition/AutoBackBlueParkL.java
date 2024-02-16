@@ -33,7 +33,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutono
 
 //@Disabled
 @Autonomous(preselectTeleOp = "CSTeleopBlue")
-public class AutoBackBluePark extends LinearOpMode {
+public class AutoBackBlueParkL extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
 
@@ -90,7 +90,7 @@ public class AutoBackBluePark extends LinearOpMode {
       webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
       webcam.openCameraDevice();
-      webcam.setPipeline(new AutoBackBluePark.PropDetectionPipeline());
+      webcam.setPipeline(new AutoBackBlueParkL.PropDetectionPipeline());
 
       //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -137,12 +137,10 @@ public class AutoBackBluePark extends LinearOpMode {
               })
               .lineTo(new Vector2d(-5, 45))
               .lineTo(new Vector2d(-5, 40))
-              .lineTo(new Vector2d(5,40))
+              .lineTo(new Vector2d(6,40))
               .build();
 
-      TrajectorySequence trajLeftPark = drive.trajectorySequenceBuilder(new Pose2d(5, 40, Math.toRadians(180)))//center spike mark
-              .lineTo(new Vector2d(5,58))
-              .build();
+
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
               .addDisplacementMarker(()->{
@@ -163,7 +161,7 @@ public class AutoBackBluePark extends LinearOpMode {
               })
               .lineTo(new Vector2d(-5, 45))
               .lineTo(new Vector2d(-5, 34))
-              .lineTo(new Vector2d(5,34))
+              .lineTo(new Vector2d(6,34))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -184,10 +182,24 @@ public class AutoBackBluePark extends LinearOpMode {
                  robot.linearSlide.setPower(0.8);
               })
               .lineTo(new Vector2d(-5, 45))
-              .lineTo(new Vector2d(-5, 27.5))
-              .lineTo(new Vector2d(5,27.5))
+              .lineTo(new Vector2d(-5, 26))
+              .lineTo(new Vector2d(6,26))
               .build();
 
+
+////////////PARKING TRAJECTORIES////////////////////////////////////
+      TrajectorySequence trajLeftPark = drive.trajectorySequenceBuilder(trajLeft.end())//left spike mark
+              .lineTo(new Vector2d(3,40))
+              .lineTo(new Vector2d(4,59.5))
+              .build();
+      TrajectorySequence trajRightPark = drive.trajectorySequenceBuilder(trajRight.end())//right spike mark
+              .lineTo(new Vector2d(3,26))
+              .lineTo(new Vector2d(4,59.5))
+              .build();
+      TrajectorySequence trajMiddlePark = drive.trajectorySequenceBuilder(trajMiddle.end())//center spike mark
+              .lineTo(new Vector2d(3,34))
+              .lineTo(new Vector2d(4,59.5))
+              .build();
 
       waitForStart();
 
@@ -227,9 +239,11 @@ public class AutoBackBluePark extends LinearOpMode {
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
          deployPixel();
+         drive.followTrajectorySequence(trajRightPark);
       } else {
          drive.followTrajectorySequence(trajMiddle);
          deployPixel();
+         drive.followTrajectorySequence(trajMiddlePark);
 
       }
    }
@@ -245,7 +259,7 @@ public class AutoBackBluePark extends LinearOpMode {
       sleep(500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
-      //sleep(100);
+      sleep(300);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setPower(0.8);

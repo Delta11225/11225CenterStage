@@ -11,7 +11,7 @@ public abstract class Constants {
     public final static double fastMultiplier = 1.0;
     public final static double normalMultiplier = 0.45;
     public final static double slowMultiplier = 0.25;
-    public final static double superSlowMultiplier = 0.2;
+    public final static double superSlowMultiplier = 0.25;
 
     public final static double droneLaunch = 1;
 
