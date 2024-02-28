@@ -29,10 +29,11 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPositio
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 
 //@Disabled
 @Autonomous(preselectTeleOp = "CSTeleopBlue")
-public class AutoFrontBlue extends LinearOpMode {
+public class AutoBackBlueParkL extends LinearOpMode {
    HardwareCC robot;
    private ElapsedTime runtime = new ElapsedTime();
 
@@ -89,7 +90,7 @@ public class AutoFrontBlue extends LinearOpMode {
       webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
       webcam.openCameraDevice();
-      webcam.setPipeline(new AutoFrontBlue.PropDetectionPipeline());
+      webcam.setPipeline(new AutoBackBlueParkL.PropDetectionPipeline());
 
       //the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
       webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -115,7 +116,7 @@ public class AutoFrontBlue extends LinearOpMode {
       Pose2d startPose = new Pose2d(-36, 61.5, Math.toRadians(180));
       drive.setPoseEstimate(startPose);
 
-      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//center spike mark
+      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//left spike mark
               .addDisplacementMarker(()->{
                  robot.Clamp.setPosition(clampClosedPosition);
               })
@@ -127,10 +128,19 @@ public class AutoFrontBlue extends LinearOpMode {
                   SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                   SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
               )
-              .lineToLinearHeading(new Pose2d(-27, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-28.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-36, 56.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
+              .lineTo(new Vector2d(-5, 45))
+              .lineTo(new Vector2d(-5, 40))
+              .lineTo(new Vector2d(6,40))
               .build();
+
+
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
               .addDisplacementMarker(()->{
@@ -142,8 +152,16 @@ public class AutoFrontBlue extends LinearOpMode {
               })
               .waitSeconds(1)
               .lineTo(new Vector2d(-36, 45))
-              .lineTo(new Vector2d(-36, 28.5))
-              .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
+              .lineTo(new Vector2d(-36, 29))
+              .lineTo(new Vector2d(-36, 45))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
+              .lineTo(new Vector2d(-5, 45))
+              .lineTo(new Vector2d(-5, 34))
+              .lineTo(new Vector2d(6,34))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -158,9 +176,30 @@ public class AutoFrontBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-36, 56.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
+              .lineTo(new Vector2d(-5, 45))
+              .lineTo(new Vector2d(-5, 26))
+              .lineTo(new Vector2d(6,26))
               .build();
 
+
+////////////PARKING TRAJECTORIES////////////////////////////////////
+      TrajectorySequence trajLeftPark = drive.trajectorySequenceBuilder(trajLeft.end())//left spike mark
+              .lineTo(new Vector2d(3,40))
+              .lineTo(new Vector2d(4,59.5))
+              .build();
+      TrajectorySequence trajRightPark = drive.trajectorySequenceBuilder(trajRight.end())//right spike mark
+              .lineTo(new Vector2d(3,26))
+              .lineTo(new Vector2d(4,59.5))
+              .build();
+      TrajectorySequence trajMiddlePark = drive.trajectorySequenceBuilder(trajMiddle.end())//center spike mark
+              .lineTo(new Vector2d(3,34))
+              .lineTo(new Vector2d(4,59.5))
+              .build();
 
       waitForStart();
 
@@ -195,32 +234,38 @@ public class AutoFrontBlue extends LinearOpMode {
 
       if (left) {
          drive.followTrajectorySequence(trajLeft);
+         deployPixel();
+         drive.followTrajectorySequence(trajLeftPark);
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
+         deployPixel();
+         drive.followTrajectorySequence(trajRightPark);
       } else {
          drive.followTrajectorySequence(trajMiddle);
+         deployPixel();
+         drive.followTrajectorySequence(trajMiddlePark);
+
       }
    }
 
    public void deployPixel() {
-
-      robot.Clamp.setPosition(clampClosedPosition);
-      sleep(500);
-      robot.Arm.setPosition(armHoldPosition);
-      sleep(1000);
-      /////Automated deploy to LOW
-
-      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy()) {
-      }
-      sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(0.8);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
-      sleep(500);
+      sleep(300);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(0.8);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(200);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
@@ -228,7 +273,7 @@ public class AutoFrontBlue extends LinearOpMode {
       sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setTargetPosition(slideZero);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
          telemetry.addLine("Stuck in loop");

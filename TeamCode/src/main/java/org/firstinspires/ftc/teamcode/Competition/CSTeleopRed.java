@@ -309,11 +309,11 @@ public class CSTeleopRed extends LinearOpMode {
             gamepad2.rumble(500);
         }
         //if robot has just grabbed pixels the claw is raised above the ground for quick movement to backdrop
-        if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==true && slideDown==true && lastGrab.seconds() > 1) {
+        if(robot.linearSlide.getCurrentPosition()<(linearSlideZeroOffset+200) && clampIsClosed==true && slideDown==true && lastGrab.seconds() > 1) {
             robot.Arm.setPosition(armHoldPosition);
         }
 
-        if(robot.linearSlide.getCurrentPosition()<200 && clampIsClosed==false && slideDown==true){
+        if(robot.linearSlide.getCurrentPosition()<(linearSlideZeroOffset+200) && clampIsClosed==false && slideDown==true){
             //if robot is ready to grab, but is moving quickly, the claw is raised above the ground so it doesn't drag
             if (slowMode==false){
                 robot.Arm.setPosition(armHoldPosition);
@@ -332,7 +332,7 @@ public class CSTeleopRed extends LinearOpMode {
             robot.Clamp.setPosition(clampClosedPosition);
             clampIsClosed=true;
         }
-        if (gamepad2.left_bumper && (armIsScoring == true || robot.linearSlide.getCurrentPosition() < Constants.linearSlideLowSafety)) {
+        if (gamepad2.left_bumper && (armIsScoring == true || robot.linearSlide.getCurrentPosition() < (linearSlideZeroOffset+Constants.linearSlideLowSafety))) {
             //clamp open
             lastGrab.reset();
             robot.Clamp.setPosition(clampOpenPosition);
@@ -352,7 +352,7 @@ public class CSTeleopRed extends LinearOpMode {
 
 //////////////////////Arm Movements//////////////////////////////////
 
-        if (gamepad2.dpad_left && robot.linearSlide.getCurrentPosition() > Constants.linearSlideLowSafety) {
+        if (gamepad2.dpad_left && robot.linearSlide.getCurrentPosition() > (linearSlideZeroOffset+Constants.linearSlideLowSafety)) {
             if( (robot.Arm.getPosition() == armScoringPosition && clampIsClosed == false)){
                 robot.Clamp.setPosition(clampClosedPosition);
                 clampIsClosed = true;
@@ -360,7 +360,7 @@ public class CSTeleopRed extends LinearOpMode {
             robot.Arm.setPosition(armHoldPosition);
             armIsScoring = false;
         }
-        if (gamepad2.b && robot.linearSlide.getCurrentPosition() > Constants.linearSlideLowSafety && clampIsClosed == true) {
+        if (gamepad2.b && robot.linearSlide.getCurrentPosition() > (linearSlideZeroOffset+Constants.linearSlideLowSafety) && clampIsClosed == true) {
             robot.Arm.setPosition(armScoringPosition);
             armIsScoring = true;
         }

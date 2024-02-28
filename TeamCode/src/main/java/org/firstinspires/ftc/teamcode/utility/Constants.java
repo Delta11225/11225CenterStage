@@ -11,7 +11,7 @@ public abstract class Constants {
     public final static double fastMultiplier = 1.0;
     public final static double normalMultiplier = 0.45;
     public final static double slowMultiplier = 0.25;
-    public final static double superSlowMultiplier = 0.2;
+    public final static double superSlowMultiplier = 0.25;
 
     public final static double droneLaunch = 1;
 
@@ -26,7 +26,7 @@ public abstract class Constants {
     public final static double clampOpenPosition = 0.05;
 //for auto
     public final static int linearSlideAutonomousDeploy = 2600;
-    public final static int linearSlideAutonomousDrop = 1900;
+    public final static int linearSlideAutonomousDrop = 2000;
     //for teleop
     public final static int linearSlideAutomatedDeployLow = 3000;//2771 old value
 

@@ -130,11 +130,10 @@ public class AutoBackRed extends LinearOpMode {
               )
               .lineToLinearHeading(new Pose2d(-29.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-36, 56.5))
+              .lineTo(new Vector2d(-67, 45))
               .turn(Math.toRadians(180))
-              .lineTo(new Vector2d(-67, 57.5))
-              .lineTo(new Vector2d(-67, 24))
-              .lineTo(new Vector2d(-75.5, 24))
+              .lineTo(new Vector2d(-67, 25))
+              .lineTo(new Vector2d(-75.5, 25))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -147,12 +146,12 @@ public class AutoBackRed extends LinearOpMode {
               })
               .waitSeconds(0.5)
               .lineTo(new Vector2d(-36, 45))
-              .lineTo(new Vector2d(-36, 28.5))
-              .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
+              .lineTo(new Vector2d(-36, 29))
+              .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
+              .lineTo(new Vector2d(-67, 45))
               .turn(Math.toRadians(180))
-              .lineTo(new Vector2d(-67, 57.5))
-              .lineTo(new Vector2d(-67, 30))
-              .lineTo(new Vector2d(-75.5, 30))
+              .lineTo(new Vector2d(-67, 31))
+              .lineTo(new Vector2d(-76.5, 31))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -167,11 +166,10 @@ public class AutoBackRed extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-36, 56.5))
+              .lineTo(new Vector2d(-67, 45))
               .turn(Math.toRadians(180))
-              .lineTo(new Vector2d(-67, 57.5))
-              .lineTo(new Vector2d(-67, 36))
-              .lineTo(new Vector2d(-75.5, 36))
+              .lineTo(new Vector2d(-67, 37))
+              .lineTo(new Vector2d(-76.5, 37))
               .build();
 
 
@@ -229,7 +227,7 @@ public class AutoBackRed extends LinearOpMode {
 
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy()) {
       }
       sleep(1500);
@@ -237,7 +235,7 @@ public class AutoBackRed extends LinearOpMode {
       sleep(500);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy()) {
       }
       sleep(500);
@@ -246,7 +244,7 @@ public class AutoBackRed extends LinearOpMode {
       sleep(500);
       robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy() && opModeIsActive()) {
       }
       sleep(500);
@@ -258,7 +256,7 @@ public class AutoBackRed extends LinearOpMode {
       sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setTargetPosition(slideZero);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3) && opModeIsActive()) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
          telemetry.addLine("Stuck in loop");
