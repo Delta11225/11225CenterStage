@@ -8,15 +8,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
-@Disabled
+// @Disabled
 public class ScissorLift extends LinearOpMode {
-   DcMotor scissorLift;
+   DcMotor leftScissor;
+   DcMotor rightScissor;
    @Override
    public void runOpMode() {
-      scissorLift = hardwareMap.get(DcMotor.class, "scissorLift");
+
+      leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
+      rightScissor = hardwareMap.get(DcMotor.class, "right_scissor");
       waitForStart();
       while (opModeIsActive()) {
-            scissorLift.setPower(-gamepad1.right_stick_y);
-         }
+         rightScissor.setPower(-gamepad1.right_stick_y);
+         leftScissor.setPower(-gamepad1.left_stick_y);
+      }
       }
    }
