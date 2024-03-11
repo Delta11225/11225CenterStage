@@ -29,6 +29,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPositio
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 
 //@Disabled
 @Autonomous(preselectTeleOp = "CSTeleopBlue")
@@ -123,12 +124,8 @@ public class AutoFrontBlue extends LinearOpMode {
                  robot.Arm.setPosition(armHoldPosition);
               })
               .waitSeconds(1)
-              .lineTo(new Vector2d(-36, 45),
-
-                  SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                  SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
-              )
-              .lineToLinearHeading(new Pose2d(-27, 31.5, Math.toRadians(225)))
+              .lineTo(new Vector2d(-36, 40))
+              .lineToLinearHeading(new Pose2d(-24.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(48, 56.5))
@@ -139,6 +136,8 @@ public class AutoFrontBlue extends LinearOpMode {
 
               })
               .lineTo(new Vector2d(48, 38.5))
+              .lineTo(new Vector2d(53, 38.5))
+
 
               .build();
 
@@ -155,7 +154,14 @@ public class AutoFrontBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .lineTo(new Vector2d(48, 56.5))
-              .lineTo(new Vector2d(48, 32.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+
+              })
+              .lineTo(new Vector2d(48, 33.5))
+              .lineTo(new Vector2d(53, 33.5))
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//right spike mark
@@ -170,9 +176,16 @@ public class AutoFrontBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
-              .lineTo(new Vector2d(-36, 56.5))
-              .lineTo(new Vector2d(48, 56.5))
-              .lineTo(new Vector2d(48, 26.5))
+              .lineTo(new Vector2d(-36, 57.5))
+              .lineTo(new Vector2d(48, 57.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+
+              })
+              .lineTo(new Vector2d(48, 27.5))
+              .lineTo(new Vector2d(53, 27.5))
               .build();
 
 
@@ -209,32 +222,34 @@ public class AutoFrontBlue extends LinearOpMode {
 
       if (left) {
          drive.followTrajectorySequence(trajLeft);
+         deployPixel();
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
+         deployPixel();
       } else {
          drive.followTrajectorySequence(trajMiddle);
+         deployPixel();
       }
    }
 
    public void deployPixel() {
-
-      robot.Clamp.setPosition(clampClosedPosition);
-      sleep(500);
-      robot.Arm.setPosition(armHoldPosition);
-      sleep(1000);
-      /////Automated deploy to LOW
-
-      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy()) {
-      }
-      sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(0.8);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
-      sleep(500);
+      sleep(300);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(0.8);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(200);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
@@ -242,7 +257,7 @@ public class AutoFrontBlue extends LinearOpMode {
       sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setTargetPosition(slideZero);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
          telemetry.addLine("Stuck in loop");
