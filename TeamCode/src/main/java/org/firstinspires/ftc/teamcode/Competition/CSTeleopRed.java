@@ -289,8 +289,8 @@ public class CSTeleopRed extends LinearOpMode {
             robot.rightScissor.setTargetPosition(scissorLiftHeightRight);
             robot.leftScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftScissor.setPower(1);
-            robot.rightScissor.setPower(1);
+            robot.leftScissor.setPower(0.5);
+            robot.rightScissor.setPower(0.5);
             while (robot.leftScissor.isBusy() || robot.rightScissor.isBusy()) {
                 telemetry.addData("left encoder", robot.leftScissor.getCurrentPosition());
                 telemetry.addData("right encoder", robot.rightScissor.getCurrentPosition());

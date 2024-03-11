@@ -34,12 +34,13 @@ public abstract class Constants {
     public final static int linearSlideAutomatedDeployHigh = 4109;
 
 
-    public final static int scissorHookHeightLeft = 40000;
-    public final static int scissorHookHeightRight = 36000;
+    public final static int scissorHookHeightLeft = 5650;
+    public final static int scissorHookHeightRight = 5150;
 
-    public final static int scissorLiftHeightLeft = scissorHookHeightLeft-19500;
-    public final static int scissorLiftHeightRight = scissorHookHeightRight-19500;
+    public final static int scissorLiftHeightLeft = scissorHookHeightLeft-3000;
+    public final static int scissorLiftHeightRight = scissorHookHeightRight-3000;
 
-
+    //left 2724
+    //right 2210
 
 }
