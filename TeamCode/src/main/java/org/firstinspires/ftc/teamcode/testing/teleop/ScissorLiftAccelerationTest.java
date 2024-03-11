@@ -12,19 +12,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class ScissorLiftAccelerationTest extends LinearOpMode {
    DcMotor leftScissor;
    @Override
+
    public void runOpMode() {
 
-      leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
       waitForStart();
       while (opModeIsActive()) {
-         double encoderCounts = leftScissor.getCurrentPosition();
-         double power = Acceleration_Power(1000, 100, 10,
-                 0.5, 312, 8, 19.2,
-                 537.7, encoderCounts);
-         leftScissor.setPower(power);
+         leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
+         if (gamepad1.a) {
+            telemetry.addData("a is clicked", ":D");
+            telemetry.update();
+            double encoderCounts = leftScissor.getCurrentPosition();
+            double power = Acceleration_Power(10, 0.1, 0.03,
+                    0.1, 312, 8, 19.2,
+                    537.7, encoderCounts);
+            leftScissor.setPower(power);
+         }
       }
    }
-
    /// OUR MOTOR IS 312 RPM, GEAR RATIO 19.2, MOTOR DIAMETER 8MM, ENCODER RESOLUTION 537.7
    /// NOTE TO PROGRAMMERS: NEED TO KEEP TRACK OF UNITS
 
@@ -35,18 +39,19 @@ public class ScissorLiftAccelerationTest extends LinearOpMode {
       double accelerationDistance = totalDistance * accelerationProportion;
       double acceleration = ((Math.pow(targetVelocity, 2) - Math.pow(initialVelocity, 2)) / (2 * accelerationDistance));
 
-      double motorCircumference = motorDiameter * Math.PI;
+      double motorCircumference = (motorDiameter * Math.PI) / 1000; // Given in mm, converted here to m
       double distancePerEncoderCount = motorCircumference / encoderResolution;
 
       double C1 = 2 * acceleration * distancePerEncoderCount;
       double C2 = Math.pow(initialVelocity, 2);
 
-      double maxMotorVelocity = motorCircumference * gearRatio * motorRPM;
+      double maxMotorVelocity = motorCircumference * gearRatio * motorRPM / 60;
 
       double velocity = Math.pow(C1 * encoderCounts + C2, 0.5);
 
       double power = velocity / maxMotorVelocity;
-
+      telemetry.addData("power: ",power);
+      telemetry.update();
       return power;
 
    }
