@@ -130,6 +130,11 @@ public class AutoBackBlue extends LinearOpMode {
               )
               .lineToLinearHeading(new Pose2d(-28.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
+              .addDisplacementMarker(()-> {
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+              })
               .lineTo(new Vector2d(-5, 45))
               .lineTo(new Vector2d(-5, 40))
               .lineTo(new Vector2d(6,40))

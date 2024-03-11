@@ -115,7 +115,7 @@ public class AutoFrontBlue extends LinearOpMode {
       Pose2d startPose = new Pose2d(-36, 61.5, Math.toRadians(180));
       drive.setPoseEstimate(startPose);
 
-      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//center spike mark
+      TrajectorySequence trajLeft = drive.trajectorySequenceBuilder(startPose)//left spike mark
               .addDisplacementMarker(()->{
                  robot.Clamp.setPosition(clampClosedPosition);
               })
@@ -124,12 +124,22 @@ public class AutoFrontBlue extends LinearOpMode {
               })
               .waitSeconds(1)
               .lineTo(new Vector2d(-36, 45),
+
                   SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                   SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
               )
               .lineToLinearHeading(new Pose2d(-27, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
+              .lineTo(new Vector2d(48, 56.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+
+              })
+              .lineTo(new Vector2d(48, 38.5))
+
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -144,9 +154,11 @@ public class AutoFrontBlue extends LinearOpMode {
               .lineTo(new Vector2d(-36, 45))
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
+              .lineTo(new Vector2d(48, 56.5))
+              .lineTo(new Vector2d(48, 32.5))
               .build();
 
-      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
+      TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//right spike mark
               .addDisplacementMarker(()->{
                  robot.Clamp.setPosition(clampClosedPosition);
               })
@@ -159,6 +171,8 @@ public class AutoFrontBlue extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-42.5, 31.5, Math.toRadians(135)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
+              .lineTo(new Vector2d(48, 56.5))
+              .lineTo(new Vector2d(48, 26.5))
               .build();
 
 

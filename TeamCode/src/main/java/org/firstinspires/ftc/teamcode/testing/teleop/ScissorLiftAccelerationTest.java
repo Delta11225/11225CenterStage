@@ -14,11 +14,11 @@ public class ScissorLiftAccelerationTest extends LinearOpMode {
    @Override
    public void runOpMode() {
 
-      leftScissor = hardwareMap.get(DcMotor.class, "left_scissor"); //////CHANGEEEE
+      leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
       waitForStart();
       while (opModeIsActive()) {
          double encoderCounts = leftScissor.getCurrentPosition();
-         double power = Acceleration_Power(100, 100, 10,
+         double power = Acceleration_Power(1000, 100, 10,
                  0.5, 312, 8, 19.2,
                  537.7, encoderCounts);
          leftScissor.setPower(power);
@@ -43,7 +43,7 @@ public class ScissorLiftAccelerationTest extends LinearOpMode {
 
       double maxMotorVelocity = motorCircumference * gearRatio * motorRPM;
 
-      double velocity = Math.pow(C1 * encoderCounts + C2, 0.5); // need a way to get encoder counts
+      double velocity = Math.pow(C1 * encoderCounts + C2, 0.5);
 
       double power = velocity / maxMotorVelocity;
 
