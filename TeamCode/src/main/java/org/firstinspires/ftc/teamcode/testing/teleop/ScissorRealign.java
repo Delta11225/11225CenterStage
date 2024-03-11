@@ -25,18 +25,18 @@ public class ScissorRealign extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.dpad_up ) {
-                leftScissor.setPower(1);
+                leftScissor.setPower(0.5);
             } else if (gamepad1.dpad_down) {
-                leftScissor.setPower(-1);
+                leftScissor.setPower(-0.5);
             } else {
                 leftScissor.setPower(0.0);
             }
 
 
             if (gamepad1.y ) {
-                rightScissor.setPower(1);
+                rightScissor.setPower(0.5);
             } else if (gamepad1.a) {
-                rightScissor.setPower(-1);
+                rightScissor.setPower(-0.5);
             } else {
                 rightScissor.setPower(0.0);
             }
