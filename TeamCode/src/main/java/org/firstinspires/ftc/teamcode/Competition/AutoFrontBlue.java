@@ -221,12 +221,15 @@ public class AutoFrontBlue extends LinearOpMode {
 ///////START OF ACTUAL MOVEMENT//////////////////////////////
 
       if (left) {
+         sleep(8000);
          drive.followTrajectorySequence(trajLeft);
          deployPixel();
       } else if (right) {
+         sleep(7000);
          drive.followTrajectorySequence(trajRight);
          deployPixel();
       } else {
+         sleep(9000);
          drive.followTrajectorySequence(trajMiddle);
          deployPixel();
       }
