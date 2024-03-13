@@ -13,9 +13,9 @@ public abstract class Constants {
     public final static double slowMultiplier = 0.25;
     public final static double superSlowMultiplier = 0.25;
 
-    public final static double droneLaunch = 0.52;
+    public final static double droneLaunch = 0.0;
 
-    public final static double droneHold = 0.0;
+    public final static double droneHold = 0.52;
 
     public final static double armCollectPosition = 0.83;
     public final static double armScoringPosition = 0.55;

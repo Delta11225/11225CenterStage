@@ -14,7 +14,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.droneLaunch;
 public class MotorTestJally extends LinearOpMode {
    Servo Oubloc;
    public void runOpMode() {
-      Oubloc = hardwareMap.get(Servo.class, "servo");
+      Oubloc = hardwareMap.get(Servo.class, "launcher");
 
       waitForStart();
       double pos = 0;
@@ -23,11 +23,11 @@ public class MotorTestJally extends LinearOpMode {
             telemetry.addData("servo position: ", Oubloc.getPosition());
             telemetry.update();
          if (gamepad1.b){
-            Oubloc.setPosition(droneHold);
+            Oubloc.setPosition(0.0);//launch
          }
 
             if (gamepad1.a){
-               Oubloc.setPosition(droneLaunch);
+               Oubloc.setPosition(0.52);//hold
             }
       }
    }
