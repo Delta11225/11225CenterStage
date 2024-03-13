@@ -124,7 +124,7 @@ public class AutoFrontBlueLongDelay extends LinearOpMode {
               })
               .waitSeconds(1)
               .lineTo(new Vector2d(-36, 45))
-              .lineToLinearHeading(new Pose2d(-23.5, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-27, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(48, 56.5))

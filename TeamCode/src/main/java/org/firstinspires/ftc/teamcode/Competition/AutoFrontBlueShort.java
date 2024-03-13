@@ -123,11 +123,8 @@ public class AutoFrontBlueShort extends LinearOpMode {
                  robot.Arm.setPosition(armHoldPosition);
               })
               .waitSeconds(1)
-              .lineTo(new Vector2d(-36, 45),
-                  SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                  SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
-              )
-              .lineToLinearHeading(new Pose2d(-27, 31.5, Math.toRadians(225)))
+              .lineTo(new Vector2d(-36, 43))
+              .lineToLinearHeading(new Pose2d(-26, 29.5, Math.toRadians(215)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .build();
