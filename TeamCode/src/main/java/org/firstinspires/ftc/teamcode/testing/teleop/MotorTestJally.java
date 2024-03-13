@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import static org.firstinspires.ftc.teamcode.utility.Constants.droneHold;
+import static org.firstinspires.ftc.teamcode.utility.Constants.droneLaunch;
+
 @TeleOp
 
 public class MotorTestJally extends LinearOpMode {
@@ -20,13 +23,11 @@ public class MotorTestJally extends LinearOpMode {
             telemetry.addData("servo position: ", Oubloc.getPosition());
             telemetry.update();
          if (gamepad1.b){
-            Oubloc.setPosition(0.0);
+            Oubloc.setPosition(droneHold);
          }
-         if (gamepad1.x){
-            Oubloc.setPosition(0.21);
-         }
+
             if (gamepad1.a){
-               Oubloc.setPosition(0.52);
+               Oubloc.setPosition(droneLaunch);
             }
       }
    }
