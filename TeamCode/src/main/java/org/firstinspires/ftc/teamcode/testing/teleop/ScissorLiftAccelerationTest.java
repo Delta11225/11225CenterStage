@@ -14,13 +14,12 @@ public class ScissorLiftAccelerationTest extends LinearOpMode {
    @Override
 
    public void runOpMode() {
+      leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
 
       waitForStart();
       while (opModeIsActive()) {
-         leftScissor = hardwareMap.get(DcMotor.class, "left_scissor");
+
          if (gamepad1.a) {
-            telemetry.addData("a is clicked", ":D");
-            telemetry.update();
             double encoderCounts = leftScissor.getCurrentPosition();
             double power = Acceleration_Power(10, 0.1, 0.03,
                     0.1, 312, 8, 19.2,

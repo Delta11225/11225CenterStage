@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -31,7 +32,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 
-//@Disabled
+@Disabled
 @Autonomous(preselectTeleOp = "CSTeleopRed")
 public class AutoBackRedParkRNOVA extends LinearOpMode {
    HardwareCC robot;
