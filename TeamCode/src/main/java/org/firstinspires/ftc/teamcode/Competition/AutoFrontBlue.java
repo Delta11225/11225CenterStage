@@ -125,7 +125,7 @@ public class AutoFrontBlue extends LinearOpMode {
               })
               .waitSeconds(1)
               .lineTo(new Vector2d(-36, 40))
-              .lineToLinearHeading(new Pose2d(-24.5, 31.5, Math.toRadians(225)))
+              .lineToLinearHeading(new Pose2d(-23.5, 31.5, Math.toRadians(225)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .lineTo(new Vector2d(48, 56.5))
@@ -221,15 +221,15 @@ public class AutoFrontBlue extends LinearOpMode {
 ///////START OF ACTUAL MOVEMENT//////////////////////////////
 
       if (left) {
-         sleep(8000);
+         sleep(7000);
          drive.followTrajectorySequence(trajLeft);
          deployPixel();
       } else if (right) {
-         sleep(7000);
+         sleep(6000);
          drive.followTrajectorySequence(trajRight);
          deployPixel();
       } else {
-         sleep(9000);
+         sleep(8000);
          drive.followTrajectorySequence(trajMiddle);
          deployPixel();
       }
