@@ -127,7 +127,9 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
-              .back(15)
+              .lineTo(new Vector2d(-108,56.5))
+              .lineTo(new Vector2d(-108, 24.5))
+              .lineTo(new Vector2d(-125, 24.5))
               .build();
 
       TrajectorySequence trajMiddle = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -143,7 +145,10 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineTo(new Vector2d(-36, 28.5))
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .turn(Math.toRadians(180))
-              .back(15)
+              .lineTo(new Vector2d(-108,56.5))
+              .lineTo(new Vector2d(-108, 30.5))
+              .lineTo(new Vector2d(-125, 30.5))
+
               .build();
 
       TrajectorySequence trajRight = drive.trajectorySequenceBuilder(startPose)//center spike mark
@@ -160,7 +165,9 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
-              .back(15)
+              .lineTo(new Vector2d(-108,56.5))
+              .lineTo(new Vector2d(-108, 37.5))
+              .lineTo(new Vector2d(-125, 37.5))
               .build();
 
 
@@ -196,11 +203,15 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
 ///////START OF ACTUAL MOVEMENT//////////////////////////////
 
       if (left) {
+         sleep(2000);
          drive.followTrajectorySequence(trajLeft);
+         deployPixel();
       } else if (right) {
          drive.followTrajectorySequence(trajRight);
+         deployPixel();
       } else {
          drive.followTrajectorySequence(trajMiddle);
+         deployPixel();
       }
    }
 
