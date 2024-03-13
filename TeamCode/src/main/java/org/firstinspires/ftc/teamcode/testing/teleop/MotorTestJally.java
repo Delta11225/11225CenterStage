@@ -11,10 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MotorTestJally extends LinearOpMode {
    Servo Oubloc;
    public void runOpMode() {
+      Oubloc = hardwareMap.get(Servo.class, "servo");
+
       waitForStart();
       double pos = 0;
       while (opModeIsActive()) {
-         Oubloc = hardwareMap.get(Servo.class, "servo");
+
             telemetry.addData("servo position: ", Oubloc.getPosition());
             telemetry.update();
          if (gamepad1.b){
