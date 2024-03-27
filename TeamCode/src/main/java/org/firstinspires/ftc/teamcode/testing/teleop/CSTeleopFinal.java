@@ -60,6 +60,7 @@ public class CSTeleopFinal extends LinearOpMode {
 
     double forward;
     double right;
+
     double clockwise;
 
     int linearSlideZeroOffset = 0;
@@ -278,11 +279,20 @@ public class CSTeleopFinal extends LinearOpMode {
             robot.leftScissor.setPower(1);
             robot.rightScissor.setPower(1);
         }
+        //scissor RESET (to zero) automation
+        //two button command to eliminate accidental trigger
+        if (gamepad1.a && gamepad1.dpad_down) {
+            robot.leftScissor.setTargetPosition(0);
+            robot.rightScissor.setTargetPosition(0);
+            robot.leftScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightScissor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftScissor.setPower(0.7);
+            robot.rightScissor.setPower(0.7);
+        }
 
         //scissor "LIFT" automation
         //two button command to eliminate accidental trigger
         if (gamepad1.x && gamepad1.dpad_right) {
-
             robot.Arm.setPosition(armTrussHeight);
 
             robot.leftScissor.setTargetPosition(scissorLiftHeightLeft);
@@ -295,7 +305,8 @@ public class CSTeleopFinal extends LinearOpMode {
                 telemetry.addData("left encoder", robot.leftScissor.getCurrentPosition());
                 telemetry.addData("right encoder", robot.rightScissor.getCurrentPosition());
                 telemetry.update();
-            }
+                }
+
 
             robot.leftScissor.setPower(0);
             robot.rightScissor.setPower(0);
