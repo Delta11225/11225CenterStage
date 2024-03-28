@@ -123,7 +123,7 @@ public class AutoFrontBlueLongDelay extends LinearOpMode {
                  robot.Arm.setPosition(armHoldPosition);
               })
               .waitSeconds(1)
-              .lineTo(new Vector2d(-36, 43))
+              .lineTo(new Vector2d(-39, 45))
               .lineToLinearHeading(new Pose2d(-25, 29.5, Math.toRadians(215)))
               .lineToLinearHeading(new Pose2d(-36, 45, Math.toRadians(180)))
               .lineTo(new Vector2d(-36, 56.5))
@@ -184,7 +184,7 @@ public class AutoFrontBlueLongDelay extends LinearOpMode {
 
               })
               .lineTo(new Vector2d(48, 27.5))
-              .lineTo(new Vector2d(53, 27.5))
+              .lineTo(new Vector2d(53.5, 27.5))
               .build();
 
 

@@ -146,8 +146,8 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .turn(Math.toRadians(180))
               .lineTo(new Vector2d(-108,56.5))
-              .lineTo(new Vector2d(-108, 31.25))
-              .lineTo(new Vector2d(-125, 31.25))
+              .lineTo(new Vector2d(-108, 31.35))
+              .lineTo(new Vector2d(-125, 31.35))
 
               .build();
 
