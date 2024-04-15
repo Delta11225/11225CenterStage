@@ -29,6 +29,7 @@ import static org.firstinspires.ftc.teamcode.utility.Constants.armScoringPositio
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampClosedPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.clampOpenPosition;
 import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDeploy;
+import static org.firstinspires.ftc.teamcode.utility.Constants.linearSlideAutonomousDrop;
 
 //@Disabled
 @Autonomous(preselectTeleOp = "CSTeleopRed")
@@ -128,6 +129,12 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
               .lineTo(new Vector2d(-108,56.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+
+              })
               .lineTo(new Vector2d(-108, 24.5))
               .lineTo(new Vector2d(-125, 24.5))
               .build();
@@ -146,6 +153,12 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineToLinearHeading(new Pose2d(-36, 56.5, Math.toRadians(180)))
               .turn(Math.toRadians(180))
               .lineTo(new Vector2d(-108,56.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+
+              })
               .lineTo(new Vector2d(-108, 31.35))
               .lineTo(new Vector2d(-125, 31.35))
 
@@ -166,6 +179,12 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
               .lineTo(new Vector2d(-36, 56.5))
               .turn(Math.toRadians(180))
               .lineTo(new Vector2d(-108,56.5))
+              .addDisplacementMarker(()->{
+                 robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+                 robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                 robot.linearSlide.setPower(0.8);
+
+              })
               .lineTo(new Vector2d(-108, 37.5))
               .lineTo(new Vector2d(-125, 37.5))
               .build();
@@ -216,24 +235,23 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
    }
 
    public void deployPixel() {
-
-      robot.Clamp.setPosition(clampClosedPosition);
-      sleep(500);
-      robot.Arm.setPosition(armHoldPosition);
-      sleep(1000);
-      /////Automated deploy to LOW
-
-      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
-      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      robot.linearSlide.setPower(1);
-      while (robot.linearSlide.isBusy()) {
-      }
-      sleep(1500);
       robot.Arm.setPosition(armScoringPosition);
       sleep(1000);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDrop+300);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(0.8);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(500);
       //open clamp
       robot.Clamp.setPosition(clampOpenPosition);
-      sleep(500);
+      sleep(300);
+      robot.linearSlide.setTargetPosition(slideZero + linearSlideAutonomousDeploy);
+      robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.linearSlide.setPower(0.8);
+      while (robot.linearSlide.isBusy()) {
+      }
+      sleep(200);
       //return to ground
       lastSlideDown.reset();
       robot.Clamp.setPosition(clampClosedPosition);
@@ -241,7 +259,7 @@ public class AutoFrontRedLongDelay extends LinearOpMode {
       sleep(1000);
       robot.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
       robot.linearSlide.setTargetPosition(slideZero);
-      robot.linearSlide.setPower(1);
+      robot.linearSlide.setPower(0.8);
       while (robot.linearSlide.isBusy() && (lastSlideDown.seconds() < 3)) {
          telemetry.addData("LinearSlideEncoder", robot.linearSlide.getCurrentPosition());
          telemetry.addLine("Stuck in loop");

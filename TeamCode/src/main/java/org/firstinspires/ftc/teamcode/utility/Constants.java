@@ -22,11 +22,11 @@ public abstract class Constants {
     public final static double armHoldPosition = 0.88;
     public final static double armTrussHeight = 1;
 
-    public final static double clampClosedPosition = 0.25;
+    public final static double clampClosedPosition = 0.3;
     public final static double clampOpenPosition = 0.05;
 //for auto
     public final static int linearSlideAutonomousDeploy = 2600;
-    public final static int linearSlideAutonomousDrop = 2000;
+    public final static int linearSlideAutonomousDrop = 1800;
     //for teleop
     public final static int linearSlideAutomatedDeployLow = 3000;//2771 old value
 
